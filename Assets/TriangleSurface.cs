@@ -1,31 +1,49 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class TriangleSurface : MonoBehaviour
 {
+    // private Vector3 gKraft = Physics.gravity; // dette tilsvarer g-vektor for -9.8m/s^2 
+    //
+    // public Vector3 barysentriccoord (Vector2 p1, Vector2 p2, Vector2 p3, Vector2 pt)
+    // {
+    //     Vector2 p12 = p2 - p1;
+    //     Vector2 p13 = p3 - p1;
+    //     Vector3 n = glm::vec3(glm::cross(glm::vec3(p12, 0.0f), glm::vec3(p13, 0.0f)));
+    //     // Vector3 = 
+    //     float areal_123 = math.length(n);        // double area
+    //     
+    //     Vector3 baryc;
+    //     // u
+    //     Vector2 p = p2 - pt;
+    //     Vector2 q = p3 - pt;
+    //     n = glm::vec3(glm::cross(glm::vec3(p, 0.0f), glm::vec3(q, 0.0f)));
+    //     baryc.x = n.z / areal_123;
+    //     // v
+    //     p = p3 - pt;
+    //     q = p1 - pt;
+    //     n = glm::vec3(glm::cross(glm::vec3(p, 0.0f), glm::vec3(q, 0.0f)));
+    //     baryc.y = n.z / areal_123;
+    //     // w
+    //     p = p1 - pt;
+    //     q = p2 - pt;
+    //     n = glm::vec3(glm::cross(glm::vec3(p, 0.0f), glm::vec3(q, 0.0f)));
+    //     baryc.z = n.z / areal_123;
+    //
+    //     return baryc;
+    // }
 
-    private void FixedUpdate()
+    
+
+   
+
+    private void Update()
     {
-        /*  Algoritme, som skal skje i hvert tidssteg
-         *
-         * 1. Identifiser hvilken trekant ballen er på (med barysentriske koordinater)
-         *
-         * 2. Beregn normalvektoren i kontaktpunktet med underlaget:
-         *  N = v0v1 x v0v2 = (v1 - v0) x (v2 - v0)
-         *
-         * 3. Beregn akselerasjonsvektoren til kula etter ligning 8.12  
-         *
-         * 4. Oppdater ballens hastighet (ligning (8.14))
-         * 5. Oppdater ballens posisjon (ligning(8.15))
-         *
-         * ---- Tror dette er valgfritt? ----
-         * 6.(Beregn ballens rotasjonsvektor)
-         * 7.(Beregn ballens rotasjon)
-         * 
-         */       
+        
         
     }
 }

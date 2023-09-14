@@ -13,8 +13,8 @@ public class CreateMap : MonoBehaviour
     public float statFrick;
     
     private Mesh mesh;
-    private Vector3[] vertices;
-    private int[] triangles;
+    public Vector3[] vertices;
+    public int[] triangles;
     
     
 
