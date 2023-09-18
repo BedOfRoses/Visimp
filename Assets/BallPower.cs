@@ -13,16 +13,11 @@ public class BallPower : MonoBehaviour
    private Vector3 currentPos;
    private CreateMap myTrekant;
    
-    /*
-     *Newtons 2.lov
-     * F = m * a
-     */
-
+  
     //Tyngdensakselerasjon
     public double g;
     float liten_m = 1;
-  
-
+    
     Vector3 fallGravity()
     {
         g = (9.81 * liten_m) / (Time.fixedDeltaTime) * (Time.fixedDeltaTime);
@@ -32,20 +27,12 @@ public class BallPower : MonoBehaviour
     public void Start()
     {
         // trekantReferanse.GetComponent<MeshCollider>();
-
     }
 
-
-    
-    
-   
-   
     Vector2 p1, p2, p3 = new Vector2();
     
-
     private void FixedUpdate()
     {
-
         /*  Algoritme, som skal skje i hvert tidssteg
          *
          * 1. Identifiser hvilken trekant ballen er på (med barysentriske koordinater)
@@ -102,10 +89,44 @@ public class BallPower : MonoBehaviour
         
     }
 
-
-
-    void move()
+    
+    void move(float deltatime)
     {
+        
+        for(/* indekser til flaten */)
+            // Finn trekantens vertices v0, v1, v2
+            // Finn ballens posisjon i xy-planet
+            // Søk etter triangel som ballen er på nå
+            // med barysentriske koordinater
+
+            if ( /* barysentriske koordinater mellom 0 og 1 */)
+            {
+                // Beregne normal
+                // beregn akselasjonsvektor - ligning (8.12)
+                
+                // Oppdaterer hastighet og posisjon 
+                // ligning (8.14) og (8.15)
+
+                if ( /* ny indeks != forrige */)
+                {
+                    // Ballen har rullet over på et nytt triangel 
+                    // beregner normalen til kollisjonsplanet,
+                    // se ligning (8.17)
+                    
+                    // Korrigere posisjon oppover i normalens retning
+                    
+                    // Oppdater hastighetsvektoren, se ligning (8.16)
+                    
+                    // Oppdatere posisjon i retning den nye 
+                    // hastighets vektoren
+                }
+                    // Oppdater gammel normal og indeks
+                
+            }
+        
+        
+        
+        
         // Vector3 v0, v1, v2;
         // for (int i = 0; i < myTrekant.triangles.Length; i+=3)
         // {
