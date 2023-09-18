@@ -10,6 +10,7 @@ public class BallPower : MonoBehaviour
 
    public GameObject trekantReferanse;
 
+   private Vector3 currentPos;
    private CreateMap myTrekant;
    
     /*
@@ -35,14 +36,11 @@ public class BallPower : MonoBehaviour
     }
 
 
-    public Vector3 barysentric(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 pt)
-    {
-        //Remember that x and z is the plane, and y is the up and down direction. ( Y AND Z CHANGE PLACE)        
-        var barry = new Vector3();
-        return barry;
-        
-    }
     
+    
+   
+   
+    Vector2 p1, p2, p3 = new Vector2();
     
 
     private void FixedUpdate()
@@ -68,6 +66,20 @@ public class BallPower : MonoBehaviour
         
         // Steg 1
         // Barcentry(myTrekant.)
+
+
+        currentPos = Barcentry(myTrekant.mesh.vertices[0],
+            myTrekant.mesh.vertices[2],
+            myTrekant.mesh.vertices[3],
+            previousPosition);
+        
+        // currentPos = Barcentry(
+        //     Vector2(myTrekant.vertices[0].x, myTrekant.vertices[0].z),
+        //     Vector2(myTrekant.vertices[1].x, myTrekant.vertices[1].z),
+        //     Vector2(myTrekant.vertices[2].x, myTrekant.vertices[2].z),
+        //     previousPosition
+        // );
+        currentPos = Barcentry(p1,p2 ,p3 , previousPosition);
         
         // Steg 2
         UpdateNormalVectorWithFloor();
@@ -128,7 +140,8 @@ public class BallPower : MonoBehaviour
     public Vector3 Barcentry(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 pt)
     {
         // y and z change places idiot mathematica blyat
-        
+        //Remember that x and z is the plane, and y is the up and down direction. ( Y AND Z CHANGE PLACE)        
+
         
         Vector2 p12 = p2 - p1;
         Vector2 p13 = p3 - p1;

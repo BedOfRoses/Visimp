@@ -12,7 +12,7 @@ public class CreateMap : MonoBehaviour
     public float dynFrick;
     public float statFrick;
     
-    private Mesh mesh;
+    public Mesh mesh;
     public Vector3[] vertices;
     public int[] triangles;
     
@@ -33,32 +33,20 @@ public class CreateMap : MonoBehaviour
     {
         vertices = new Vector3[]
         {
-            new Vector3(0     ,0.097f  ,0      )          * 10f  ,            // 0
-            new Vector3(0.4f  ,0.005f  ,0      )       * 10f  ,         // 1
-            new Vector3(0     ,0.005f  ,0.4f   )     * 10f  ,       // 2
-            new Vector3(0.4f  ,0.075f  ,0.4f   )    * 10f  ,      // 3
-            new Vector3(0.8f  ,0.007f  ,0.4f   )  * 10f  ,    // 4
-            new Vector3(0.8f  ,0.039f  ,0      )       * 10f  // 5
+            new Vector3(0     ,0.097f  ,0      )       * 10f  ,     // 0
+            new Vector3(0.4f  ,0.005f  ,0      )       * 10f  ,     // 1
+            new Vector3(0     ,0.005f  ,0.4f   )       * 10f  ,     // 2
+            new Vector3(0.4f  ,0.075f  ,0.4f   )       * 10f  ,     // 3
+            new Vector3(0.8f  ,0.007f  ,0.4f   )       * 10f  ,     // 4
+            new Vector3(0.8f  ,0.039f  ,0      )       * 10f        // 5
         };
 
         triangles = new int[]
         {
-        
-            
-       //  0,1,2,        // back-FACE-culling ? huh?
-       //  2,1,3,        // back-FACE-culling ? huh?
-       //  4,3,1,        // back-FACE-culling ? huh?
-       //  1,5,4         // back-FACE-culling ? huh?
-          
           4,5,1,
           1,3,4,
           3,1,2,
           2,1,0
-          
-          
-         
-            
-            
         };
     }
 
@@ -68,8 +56,6 @@ public class CreateMap : MonoBehaviour
         mesh.Clear();
         mesh.vertices = vertices;
         mesh.triangles = triangles;
-        
-        
     }
 
 }
