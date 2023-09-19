@@ -56,6 +56,8 @@ public class BallPower : MonoBehaviour
         // Steg 1
         // Barcentry(myTrekant.)
 
+       
+        
         move(Time.fixedDeltaTime);
 
         // currentPos = Barcentry(myTrekant.mesh.vertices[0],
@@ -88,13 +90,26 @@ public class BallPower : MonoBehaviour
     
     void move(float deltatime)
     {
-        for (int i = 0; i < myTrekant.mesh.triangles.Length; /*myTrekant.triangles.Length;*/ i += 3) /* indekser til flaten */
+        /*myTrekant.triangles.Length;*/ 
+        /* indekser til flaten * /*/
+        
+        // myTrekant.mesh.triangles.Length = 12
+        for (int i = 0; i < myTrekant.mesh.triangles.Length;  i+=3 )
         {
-            // Finn trekantens vertices v0, v1, v2
-            Vector3 v0, v1, v2;                     
-            v0 = new Vector3(myTrekant.mesh.vertices[i].x, myTrekant.mesh.vertices[i].y, myTrekant.mesh.vertices[i].z);
-            v1 = new Vector3(myTrekant.mesh.vertices[i+1].x, myTrekant.mesh.vertices[i+1].y, myTrekant.mesh.vertices[i+1].z);
-            v2 = new Vector3(myTrekant.mesh.vertices[i+2].x, myTrekant.mesh.vertices[i+2].y, myTrekant.mesh.vertices[i+2].z);
+            Vector3 v0, v1, v2; // Finn trekantens vertices v0, v1, v2
+            
+            // Iterate through the 
+            int index_0 = myTrekant.mesh.triangles[i];
+            int index_1 = myTrekant.mesh.triangles[i+1];
+            int index_2 = myTrekant.mesh.triangles[i+2];
+            
+            v0 = myTrekant.mesh.vertices[index_0];
+            v1 = myTrekant.mesh.vertices[index_1];
+            v2 = myTrekant.mesh.vertices[index_2];
+            
+            // v0 = new Vector3(myTrekant.mesh.vertices[i].x, myTrekant.mesh.vertices[i].y, myTrekant.mesh.vertices[i].z);
+            // v1 = new Vector3(myTrekant.mesh.vertices[i+1].x, myTrekant.mesh.vertices[i+1].y, myTrekant.mesh.vertices[i+1].z);
+            // v2 = new Vector3(myTrekant.mesh.vertices[i+2].x, myTrekant.mesh.vertices[i+2].y, myTrekant.mesh.vertices[i+2].z);
             
             //TODO husk å bruke xz-planet!
             Vector3 _tempBallPos = transform.position;   // Finn ballens posisjon i xy-planet
