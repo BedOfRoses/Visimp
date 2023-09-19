@@ -43,10 +43,10 @@ public class CreateMap : MonoBehaviour
 
         triangles = new int[]
         {
-          4,5,1,
-          1,3,4,
-          3,1,2,
-          2,1,0
+          4,5,1,    
+          1,3,4,    
+          3,1,2,    
+          2,1,0     
         };
     }
 

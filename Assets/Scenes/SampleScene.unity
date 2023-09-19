@@ -578,6 +578,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trekantReferanse: {fileID: 637265903}
+  myTrekant: {fileID: 637265904}
   g: 0
 --- !u!23 &812888970
 MeshRenderer:
