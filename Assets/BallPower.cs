@@ -56,7 +56,8 @@ public class BallPower : MonoBehaviour
         // Steg 1
         // Barcentry(myTrekant.)
 
-       
+
+        // this.transform.position += Physics.gravity; // this simply adds the force of gravity
         
         move(Time.fixedDeltaTime);
 
