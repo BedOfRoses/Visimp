@@ -11,7 +11,8 @@ public class BallPower : MonoBehaviour
    public GameObject trekantReferanse;
 
    private Vector3 currentPos;
-   private CreateMap myTrekant;
+   
+   public CreateMap myTrekant;
    
   
     //Tyngdensakselerasjon
@@ -26,6 +27,7 @@ public class BallPower : MonoBehaviour
 
     public void Start()
     {
+        // myTrekant = GetComponent<mytrekant>()
         // trekantReferanse.GetComponent<MeshCollider>();
     }
 
@@ -54,19 +56,13 @@ public class BallPower : MonoBehaviour
         // Steg 1
         // Barcentry(myTrekant.)
 
+        move(Time.fixedDeltaTime);
 
-        currentPos = Barcentry(myTrekant.mesh.vertices[0],
-            myTrekant.mesh.vertices[2],
-            myTrekant.mesh.vertices[3],
-            previousPosition);
-        
-        // currentPos = Barcentry(
-        //     Vector2(myTrekant.vertices[0].x, myTrekant.vertices[0].z),
-        //     Vector2(myTrekant.vertices[1].x, myTrekant.vertices[1].z),
-        //     Vector2(myTrekant.vertices[2].x, myTrekant.vertices[2].z),
-        //     previousPosition
-        // );
-        currentPos = Barcentry(p1,p2 ,p3 , previousPosition);
+        // currentPos = Barcentry(myTrekant.mesh.vertices[0],
+        //     myTrekant.mesh.vertices[2],
+        //     myTrekant.mesh.vertices[3],
+        //     previousPosition);
+        // currentPos = Barcentry(p1,p2 ,p3 , previousPosition);
         
         // Steg 2
         UpdateNormalVectorWithFloor();
@@ -92,24 +88,28 @@ public class BallPower : MonoBehaviour
     
     void move(float deltatime)
     {
-        for (int i = 0; i < myTrekant.triangles.Length; i += 3) /* indekser til flaten */
+        for (int i = 0; i < myTrekant.mesh.triangles.Length; /*myTrekant.triangles.Length;*/ i += 3) /* indekser til flaten */
         {
             // Finn trekantens vertices v0, v1, v2
             Vector3 v0, v1, v2;                     
             v0 = new Vector3(myTrekant.mesh.vertices[i].x, myTrekant.mesh.vertices[i].y, myTrekant.mesh.vertices[i].z);
-            v1 = new Vector3(myTrekant.mesh.vertices[i+1].x, myTrekant.mesh.vertices[i+1].y, myTrekant.mesh.vertices[i].z+1);
+            v1 = new Vector3(myTrekant.mesh.vertices[i+1].x, myTrekant.mesh.vertices[i+1].y, myTrekant.mesh.vertices[i+1].z);
             v2 = new Vector3(myTrekant.mesh.vertices[i+2].x, myTrekant.mesh.vertices[i+2].y, myTrekant.mesh.vertices[i+2].z);
             
             //TODO husk å bruke xz-planet!
             Vector3 _tempBallPos = transform.position;   // Finn ballens posisjon i xy-planet
             Vector2 ballpos = new Vector2(_tempBallPos.x, _tempBallPos.z);
 
-            // Søk etter triangel som ballen er på nå
-            // med barysentriske koordinater
-
-            /* returnerer ball*/
+            
+            // Søk etter triangel som ballen er på nå med barysentriske koordinater
+            /* returnerer ball*/ 
             Vector3 ballBarysentrisk = Barcentry(v0, v1, v2, ballpos); 
 
+            Debug.Log("x: "+ ballBarysentrisk.x.ToString() +
+                      "y: "+ ballBarysentrisk.y.ToString() + 
+                      "z:"+ ballBarysentrisk.z.ToString()
+                      );
+            
             /* barysentriske koordinater mellom 0 og 1 */
             if (
                 (ballBarysentrisk.x >= 0  && ballBarysentrisk.x <= 1) ||
@@ -119,25 +119,32 @@ public class BallPower : MonoBehaviour
             {
                 
                 // Beregne normal
+                
+                // N = (_v1 - _v0) crossproduct (_v2 - _v0) // Formel for normalvektor i planet.
+                
+                //TODO FINNE UT AV hvordan man får "nedover" bakken sin vec3 og oppover vec3
+                //Vector3 normalVector = Vector3.Cross((ballBarysentrisk - _tempBallPos),())
+                
+                
                 // beregn akselasjonsvektor - ligning (8.12)
                 
                 // Oppdaterer hastighet og posisjon 
                 // ligning (8.14) og (8.15)
 
-                if ( /* ny indeks != forrige */)
-                {
-                    // Ballen har rullet over på et nytt triangel 
-                    // beregner normalen til kollisjonsplanet,
-                    // se ligning (8.17)
-                    
-                    // Korrigere posisjon oppover i normalens retning
-                    
-                    // Oppdater hastighetsvektoren, se ligning (8.16)
-                    
-                    // Oppdatere posisjon i retning den nye 
-                    // hastighets vektoren
-                }
-                    // Oppdater gammel normal og indeks
+              // STEG 2 if ( /* ny indeks != forrige */)
+              // STEG 2 {
+              // STEG 2     // Ballen har rullet over på et nytt triangel 
+              // STEG 2     // beregner normalen til kollisjonsplanet,
+              // STEG 2     // se ligning (8.17)
+              // STEG 2     
+              // STEG 2     // Korrigere posisjon oppover i normalens retning
+              // STEG 2     
+              // STEG 2     // Oppdater hastighetsvektoren, se ligning (8.16)
+              // STEG 2     
+              // STEG 2     // Oppdatere posisjon i retning den nye 
+              // STEG 2     // hastighets vektoren
+              // STEG 2 }
+              // STEG 2     // Oppdater gammel normal og indeks
                 
             }
         }
