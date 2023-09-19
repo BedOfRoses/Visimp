@@ -92,12 +92,22 @@ public class BallPower : MonoBehaviour
     
     void move(float deltatime)
     {
-        
-        for(/* indekser til flaten */)
+        for (int i = 0; i < myTrekant.triangles.Length; i += 3) /* indekser til flaten */
+        {
             // Finn trekantens vertices v0, v1, v2
-            // Finn ballens posisjon i xy-planet
+            Vector3 v0, v1, v2;                     
+            v0 = new Vector3(myTrekant.mesh.vertices[i].x, myTrekant.mesh.vertices[i].y, myTrekant.mesh.vertices[i].z);
+            v1 = new Vector3(myTrekant.mesh.vertices[i+1].x, myTrekant.mesh.vertices[i+1].y, myTrekant.mesh.vertices[i].z+1);
+            v2 = new Vector3(myTrekant.mesh.vertices[i+2].x, myTrekant.mesh.vertices[i+2].y, myTrekant.mesh.vertices[i+2].z);
+            
+            //TODO husk å bruke xz-planet!
+            Vector3 _tempBallPos = transform.position;   // Finn ballens posisjon i xy-planet
+            Vector2 ballpos = new Vector2(_tempBallPos.x, _tempBallPos.z);
+
             // Søk etter triangel som ballen er på nå
             // med barysentriske koordinater
+
+            Vector3 ballBarysentrisk = Barcentry(v0, v1, v2, ballpos);
 
             if ( /* barysentriske koordinater mellom 0 og 1 */)
             {
@@ -123,16 +133,7 @@ public class BallPower : MonoBehaviour
                     // Oppdater gammel normal og indeks
                 
             }
-        
-        
-        
-        
-        // Vector3 v0, v1, v2;
-        // for (int i = 0; i < myTrekant.triangles.Length; i+=3)
-        // {
-        //     v0 = new Vector3(myTrekant.vertices[i].x, myTrekant.vertices[i].y, myTrekant.vertices[i].z);
-        //     
-        // }
+        }
     }
     
     private void Update()
