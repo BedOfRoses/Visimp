@@ -107,10 +107,17 @@ public class BallPower : MonoBehaviour
             // Søk etter triangel som ballen er på nå
             // med barysentriske koordinater
 
-            Vector3 ballBarysentrisk = Barcentry(v0, v1, v2, ballpos);
+            /* returnerer ball*/
+            Vector3 ballBarysentrisk = Barcentry(v0, v1, v2, ballpos); 
 
-            if ( /* barysentriske koordinater mellom 0 og 1 */)
+            /* barysentriske koordinater mellom 0 og 1 */
+            if (
+                (ballBarysentrisk.x >= 0  && ballBarysentrisk.x <= 1) ||
+                (ballBarysentrisk.y >= 0  && ballBarysentrisk.y <= 1) ||
+                (ballBarysentrisk.z >= 0  && ballBarysentrisk.z <= 1) 
+                )
             {
+                
                 // Beregne normal
                 // beregn akselasjonsvektor - ligning (8.12)
                 
