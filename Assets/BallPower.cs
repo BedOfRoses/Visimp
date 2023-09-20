@@ -6,19 +6,19 @@ using UnityEngine;
 public class BallPower : MonoBehaviour
 {
     
-   private Vector2 previousPosition;
+  [SerializeField]  private Vector2 previousPosition;
 
-   public GameObject trekantReferanse;
-   
-   private Vector3 deltaPos = Vector3.zero;
-   private Vector3 currentPos = Vector3.zero;
-   private Vector3 currentVelocity = Vector3.zero;
+  [SerializeField]  public GameObject trekantReferanse;
+ 
+  [SerializeField]  private Vector3 deltaPos = Vector3.zero;
+  [SerializeField]  private Vector3 currentPos = Vector3.zero;
+  [SerializeField]  private Vector3 currentVelocity = Vector3.zero;
 
-   private int current_Index;
-   private int previous_Index;
-
-   private Vector3 currentNormal = Vector3.zero;  // n - normal-vektor
-   private Vector3 previousNormal = Vector3.zero; // m - normal-vektor
+  [SerializeField]  private int current_Index;
+  [SerializeField]  private int previous_Index;
+  
+  [SerializeField]  private Vector3 currentNormal = Vector3.zero;  // n - normal-vektor
+  [SerializeField]  private Vector3 previousNormal = Vector3.zero; // m - normal-vektor
    
    
    
@@ -31,6 +31,11 @@ public class BallPower : MonoBehaviour
     public void Start()
     {
         _prevPos = transform.position;
+        
+        
+        
+        
+        
     }
 
     Vector2 p1, p2, p3 = new Vector2();
@@ -65,20 +70,17 @@ public class BallPower : MonoBehaviour
             
             Vector3 ballBarysentrisk = Barcentry(v0, v1, v2, ballpos); // Søk etter triangel som ballen er på nå med barysentriske koordinater
             
-            Debug.Log("x: "+ ballBarysentrisk.x.ToString() + "y: "+ ballBarysentrisk.y.ToString() + "z:"+ ballBarysentrisk.z.ToString());
+            // Debug.Log("x: "+ ballBarysentrisk.x.ToString() + "y: "+ ballBarysentrisk.y.ToString() + "z:"+ ballBarysentrisk.z.ToString());
             
             if (ballBarysentrisk.x >= 0 && ballBarysentrisk.y >= 0 && ballBarysentrisk.z >= 0) /* barysentriske koordinater mellom 0 og 1. "blir på en måte ""lokalt"" "*/
             {
-                // N = (_v1 - _v0) crossproduct (_v2 - _v0) // Formel for normalvektor i planet.
-                previousNormal  = Vector3.Cross((v1 - v0), (v2 - v0)); // Normalvektor i planet
-                
+                previousNormal  = Vector3.Cross((v1 - v0), (v2 - v0)); // Normalvektor i planet N = (_v1 - _v0) crossproduct (_v2 - _v0)
                 
                 // beregn akselasjonsvektor - ligning (8.12)
                 var accelVector = new Vector3(
                     (previousNormal.x * previousNormal.z),
                     (previousNormal.y * previousNormal.y) - 1f,
-                    (previousNormal.z * previousNormal.x)
-                    ) * Physics.gravity.y;
+                    (previousNormal.z * previousNormal.x) ) * Physics.gravity.y;
 
                 // Update Velocity
                 var prevVelocity = deltaPos * Time.fixedDeltaTime;
@@ -89,20 +91,9 @@ public class BallPower : MonoBehaviour
                 
                 if (current_Index != previous_Index)
                 {
-                 
-                    //var xvec = m_NormalVec + nexttrekantvektor 
-                    
-                    /*
-                     * xvec = normalvektor til planet. Da er
-                     *      
-                     * ->   ->   ->
-                     * x =   m + n
-                     *      -------
-                     *      ->   ->
-                     *      |m + n|
-                     */
+                    var xvec = (previousNormal + currentNormal).normalized;
                     //var _collisionPlane = normalVector + 
-                    
+
                 }
                 // STEG 2 if ( /* ny indeks != forrige */)
                 // STEG 2 {
@@ -111,7 +102,7 @@ public class BallPower : MonoBehaviour
                 // Oppdater hastighetsvektoren, se ligning (8.16)
                 // Oppdatere posisjon i retning den nye hastighets vektoren
             }
-
+            previousNormal = currentNormal;
             previous_Index = current_Index;
             
             // Oppdater gammel normal og indeks

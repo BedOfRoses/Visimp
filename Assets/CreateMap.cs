@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -15,10 +16,8 @@ public class CreateMap : MonoBehaviour
     public Mesh mesh;
     public Vector3[] vertices;
     public int[] triangles;
-    
-    
 
-    void Start()
+    private void Awake()
     {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
@@ -28,6 +27,7 @@ public class CreateMap : MonoBehaviour
         meshji.material.dynamicFriction = dynFrick;
         meshji.material.staticFriction = statFrick;
     }
+    
 
     void CreateShape()
     {
@@ -57,6 +57,36 @@ public class CreateMap : MonoBehaviour
         mesh.vertices = vertices;
         mesh.triangles = triangles;
     }
+    
+    float GetSurfaceHeight(Vector2 veccc)
+    {
+        // source https://github.com/haldorj/3Dprog22/blob/main/triangulation.cpp
+        
+        for (var i = 0; i < triangles.Length; i++)
+        {
+            Vector3 v0, v1, v2;
+            
+            var index_0 = triangles[i];
+            var index_1 = triangles[i+1];
+            var index_2 = triangles[i+2];
+            
+            v0 = vertices[index_0];
+            v1 = vertices[index_1];
+            v2 = vertices[index_2];
+
+            var baryCords = GetComponent<BallPower>().Barcentry(v0, v1, v2, veccc);
+
+            if (baryCords is {x: >= 0, y: >= 0, z: >= 0})
+            {
+                var height = (baryCords.x * v0.y + baryCords.y * v1.y + baryCords.z * v2.y);
+
+                return height;
+            }
+        }
+
+        return 0f;
+    }
+    
 
 }
 
