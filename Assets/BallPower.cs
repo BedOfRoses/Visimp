@@ -13,6 +13,14 @@ public class BallPower : MonoBehaviour
    private Vector3 deltaPos = Vector3.zero;
    private Vector3 currentPos = Vector3.zero;
    private Vector3 currentVelocity = Vector3.zero;
+
+   private int current_Index;
+   private int previous_Index;
+
+   private Vector3 currentNormal = Vector3.zero;  // n - normal-vektor
+   private Vector3 previousNormal = Vector3.zero; // m - normal-vektor
+   
+   
    
    public CreateMap myTrekant;
 
@@ -40,8 +48,8 @@ public class BallPower : MonoBehaviour
         // myTrekant.mesh.triangles.Length = 12
         for (int i = 0; i < myTrekant.mesh.triangles.Length;  i+=3 )
         {
-            var currentindex = i / 3; // fordi vi iterater med + 3
-            Vector3 v0, v1, v2; // Finn trekantens vertices v0, v1, v2
+            current_Index = i / 3;
+            Vector3 v0, v1, v2; 
             // Iterate through the vertex data
             int index_0 = myTrekant.mesh.triangles[i];
             int index_1 = myTrekant.mesh.triangles[i+1];
@@ -50,11 +58,7 @@ public class BallPower : MonoBehaviour
             v0 = myTrekant.mesh.vertices[index_0];
             v1 = myTrekant.mesh.vertices[index_1];
             v2 = myTrekant.mesh.vertices[index_2];
-            Debug.Log(
-                 "v0x: " +v0.x +  "v0y: "+ v0.y + "v0z: "+ v0.z +
-                         "v1x : "+v1.x + "v1y: "+v1.y + "v1z: " +v1.z  +
-                         "v2x : "+v2.x + "v2y: "+v2.y + "v2z: "+v2.z
-                );
+           
             
             Vector3 _tempBallPos = transform.position;   // Finn ballens posisjon i xy-planet
             Vector2 ballpos = new Vector2(_tempBallPos.x, _tempBallPos.z);
@@ -66,27 +70,28 @@ public class BallPower : MonoBehaviour
             if (ballBarysentrisk.x >= 0 && ballBarysentrisk.y >= 0 && ballBarysentrisk.z >= 0) /* barysentriske koordinater mellom 0 og 1. "blir på en måte ""lokalt"" "*/
             {
                 // N = (_v1 - _v0) crossproduct (_v2 - _v0) // Formel for normalvektor i planet.
-                Vector3 normalVector = Vector3.Cross((v1 - v0), (v2 - v0)); // Normalvektor i planet
+                previousNormal  = Vector3.Cross((v1 - v0), (v2 - v0)); // Normalvektor i planet
                 
-                Vector3 m_NormalVec = normalVector;
                 
-                Vector3 _NormalAccelVector = new Vector3(
-                    (normalVector.x * normalVector.z),
-                    (normalVector.y * normalVector.y) - 1f,
-                    (normalVector.z * normalVector.x)
-                    );
                 // beregn akselasjonsvektor - ligning (8.12)
-                Vector3 _newNormalAccelVector = Physics.gravity.y * _NormalAccelVector;
+                var accelVector = new Vector3(
+                    (previousNormal.x * previousNormal.z),
+                    (previousNormal.y * previousNormal.y) - 1f,
+                    (previousNormal.z * previousNormal.x)
+                    ) * Physics.gravity.y;
 
                 // Update Velocity
                 var prevVelocity = deltaPos * Time.fixedDeltaTime;
-                currentVelocity = prevVelocity + _newNormalAccelVector * Time.fixedDeltaTime; // ligning (8.14)
+                currentVelocity = prevVelocity + accelVector * Time.fixedDeltaTime; // ligning (8.14)
 
                 // Update Position
                 currentPos = _prevPos + currentVelocity * Time.fixedDeltaTime; // ligning (8.15)
                 
-                if (currentindex != i)
+                if (current_Index != previous_Index)
                 {
+                 
+                    //var xvec = m_NormalVec + nexttrekantvektor 
+                    
                     /*
                      * xvec = normalvektor til planet. Da er
                      *      
@@ -106,7 +111,10 @@ public class BallPower : MonoBehaviour
                 // Oppdater hastighetsvektoren, se ligning (8.16)
                 // Oppdatere posisjon i retning den nye hastighets vektoren
             }
-                     // Oppdater gammel normal og indeks
+
+            previous_Index = current_Index;
+            
+            // Oppdater gammel normal og indeks
         }
     }
     
