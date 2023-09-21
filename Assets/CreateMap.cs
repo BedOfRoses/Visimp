@@ -58,7 +58,7 @@ public class CreateMap : MonoBehaviour
         mesh.triangles = triangles;
     }
     
-    float GetSurfaceHeight(Vector2 veccc)
+    public float GetSurfaceHeight(Vector2 veccc)
     {
         // source https://github.com/haldorj/3Dprog22/blob/main/triangulation.cpp
         

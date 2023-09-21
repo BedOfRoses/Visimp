@@ -9,7 +9,8 @@ public class BallPower : MonoBehaviour
   [SerializeField]  private Vector2 previousPosition;
 
   [SerializeField]  public GameObject trekantReferanse;
- 
+
+  [SerializeField] private Vector2 ballpos = Vector2.zero;
   [SerializeField]  private Vector3 deltaPos = Vector3.zero;
   [SerializeField]  private Vector3 currentPos = Vector3.zero;
   [SerializeField]  private Vector3 currentVelocity = Vector3.zero;
@@ -17,35 +18,52 @@ public class BallPower : MonoBehaviour
   [SerializeField]  private int current_Index;
   [SerializeField]  private int previous_Index;
   
+  
   [SerializeField]  private Vector3 currentNormal = Vector3.zero;  // n - normal-vektor
   [SerializeField]  private Vector3 previousNormal = Vector3.zero; // m - normal-vektor
-   
-   
+
+  [SerializeField] private Vector3 barysentricCoordinateToBall = Vector3.zero;
    
    public CreateMap myTrekant;
 
-   private Vector3 _prevPos;
+   [SerializeField] private Vector3 _prevPos;
+   [SerializeField] private Vector3 centerOfBall = Vector3.zero;
+   
+   
+   private Vector2 p1, p2, p3 = new Vector2();
 
    private float _mass = 0.004f;
+
+   public void CollisionCorrection()
+   {
+       var k = barysentricCoordinateToBall; // baryCoordForBall
+       var center = centerOfBall;
+       var dVec = k - center;
+       var s = center - currentPos;
+       var bVec = currentNormal * Vector3.Dot(dVec, k);
+       
+   }
    
-    public void Start()
+
+   public void Start()
     {
+        // initial start pos
         _prevPos = transform.position;
-        
-        
-        
-        
-        
+        ballpos = _prevPos;
+        centerOfBall = ballpos;
     }
 
-    Vector2 p1, p2, p3 = new Vector2();
     
     private void FixedUpdate()
     {
+        
+        ballpos = new Vector2(transform.position.x, transform.position.z);
         currentPos = transform.position;
+        centerOfBall = currentPos; // this is just to have variation of the name in my code
         deltaPos = currentPos - _prevPos;
 
         move();
+        CollisionCorrection();
     }
     
     void move()
@@ -63,13 +81,11 @@ public class BallPower : MonoBehaviour
             v0 = myTrekant.mesh.vertices[index_0];
             v1 = myTrekant.mesh.vertices[index_1];
             v2 = myTrekant.mesh.vertices[index_2];
-           
             
-            Vector3 _tempBallPos = transform.position;   // Finn ballens posisjon i xy-planet
-            Vector2 ballpos = new Vector2(_tempBallPos.x, _tempBallPos.z);
+            ballpos = new Vector2(transform.position.x, transform.position.z);
             
             Vector3 ballBarysentrisk = Barcentry(v0, v1, v2, ballpos); // Søk etter triangel som ballen er på nå med barysentriske koordinater
-            
+            barysentricCoordinateToBall = Barcentry(v0, v1, v2, ballpos);
             // Debug.Log("x: "+ ballBarysentrisk.x.ToString() + "y: "+ ballBarysentrisk.y.ToString() + "z:"+ ballBarysentrisk.z.ToString());
             
             if (ballBarysentrisk.x >= 0 && ballBarysentrisk.y >= 0 && ballBarysentrisk.z >= 0) /* barysentriske koordinater mellom 0 og 1. "blir på en måte ""lokalt"" "*/
