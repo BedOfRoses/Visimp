@@ -86,8 +86,8 @@ public class RollingBall : MonoBehaviour
                 currentVelocity = previousVelocity + accelerationVector * Time.fixedDeltaTime;
 
                 currentPosition = previousPosition + previousVelocity * Time.fixedDeltaTime;
-               
-                
+
+                transform.position += currentPosition; //TODO MÅ BRUKE DEN
                 
                 // Oppdaterer hastighet og posisjon
                 // ligning ( 8 . 1 4 ) og ( 8 . 1 5 )
