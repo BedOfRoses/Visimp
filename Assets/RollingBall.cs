@@ -6,18 +6,60 @@ using UnityEngine;
 public class RollingBall : MonoBehaviour
 {
     
-    
-    
-    
-    
-    
-    
+    #region hastighet og vector 3 for hastighet og posisjon
+    [SerializeField] private Vector2 ballpos = Vector2.zero;
+    [SerializeField]  private Vector3 deltaPos = Vector3.zero;
+    [SerializeField]  private Vector3 currentPos = Vector3.zero;
+    [SerializeField] private Vector3 _prevPos;
+    [SerializeField]  private Vector3 currentVelocity = Vector3.zero;
+    [SerializeField] private Vector3 previousVelocity = Vector3.zero;
+    #endregion
+
+    #region index for triangler
+    [SerializeField]  private int current_Index;
+    [SerializeField]  private int previous_Index;
+    #endregion
+  
+    #region normalen til triangler
+    [SerializeField]  private Vector3 currentNormal = Vector3.zero;  // n - normal-vektor
+    [SerializeField]  private Vector3 previousNormal = Vector3.zero; // m - normal-vektor
+    #endregion
+
+    #region referanser
+    public CreateMap myTrekant;
+    #endregion
+
+  
+    #region Vertexer
+    [SerializeField] private Vector3 vertex0 = Vector3.zero;
+    [SerializeField] private Vector3 vertex1 = Vector3.zero;
+    [SerializeField] private Vector3 vertex2 = Vector3.zero;
+    #endregion
+  
+  
+    [SerializeField] private Vector3 barysentricCoordinateToBall = Vector3.zero;
+    [SerializeField] private Vector3 centerOfBall = Vector3.zero;
+    private float _mass = 0.004f;
+
+
+
+    public void Move()
+    {
+        
+    }
     
     
     
 
     private void FixedUpdate()
     {
+        
+        
+        
+        
+        
+        
+        
         
     }
     
