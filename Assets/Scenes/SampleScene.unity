@@ -535,6 +535,7 @@ GameObject:
   - component: {fileID: 812888971}
   - component: {fileID: 812888970}
   - component: {fileID: 812888969}
+  - component: {fileID: 812888973}
   - component: {fileID: 812888968}
   m_Layer: 0
   m_Name: Ball
@@ -572,21 +573,27 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 812888966}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 444ea9e362f842d4f841475505f06db1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  previousPosition: {x: 0, y: 0}
-  trekantReferanse: {fileID: 637265903}
+  ballpos: {x: 0, y: 0}
   deltaPos: {x: 0, y: 0, z: 0}
   currentPos: {x: 0, y: 0, z: 0}
+  _prevPos: {x: 0, y: 0, z: 0}
   currentVelocity: {x: 0, y: 0, z: 0}
+  previousVelocity: {x: 0, y: 0, z: 0}
   current_Index: 0
   previous_Index: 0
   currentNormal: {x: 0, y: 0, z: 0}
   previousNormal: {x: 0, y: 0, z: 0}
   myTrekant: {fileID: 637265904}
+  vertex0: {x: 0, y: 0, z: 0}
+  vertex1: {x: 0, y: 0, z: 0}
+  vertex2: {x: 0, y: 0, z: 0}
+  barysentricCoordinateToBall: {x: 0, y: 0, z: 0}
+  centerOfBall: {x: 0, y: 0, z: 0}
 --- !u!23 &812888970
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -652,6 +659,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &812888973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 812888966}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79ce4d69a4ba6e64cb5eeb90a423bc02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0

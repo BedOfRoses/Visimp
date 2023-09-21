@@ -1,37 +1,41 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BallPower : MonoBehaviour
 {
     
-  [SerializeField]  private Vector2 previousPosition;
-
-  [SerializeField]  public GameObject trekantReferanse;
-
+  #region hastighet og vector 3 for hastighet og posisjon
   [SerializeField] private Vector2 ballpos = Vector2.zero;
   [SerializeField]  private Vector3 deltaPos = Vector3.zero;
   [SerializeField]  private Vector3 currentPos = Vector3.zero;
+  [SerializeField] private Vector3 _prevPos;
   [SerializeField]  private Vector3 currentVelocity = Vector3.zero;
-
+  [SerializeField] private Vector3 previousVelocity = Vector3.zero;
+  #endregion
+  
+  #region index for triangler
   [SerializeField]  private int current_Index;
   [SerializeField]  private int previous_Index;
+  #endregion
   
-  
+  #region normalen til triangler
   [SerializeField]  private Vector3 currentNormal = Vector3.zero;  // n - normal-vektor
   [SerializeField]  private Vector3 previousNormal = Vector3.zero; // m - normal-vektor
+  #endregion
 
-  [SerializeField] private Vector3 barysentricCoordinateToBall = Vector3.zero;
-   
-   public CreateMap myTrekant;
+  #region referanser
+  public CreateMap myTrekant;
+  #endregion
 
-   [SerializeField] private Vector3 _prevPos;
+  
+  #region Vertexer
+  [SerializeField] private Vector3 vertex0 = Vector3.zero;
+  [SerializeField] private Vector3 vertex1 = Vector3.zero;
+  [SerializeField] private Vector3 vertex2 = Vector3.zero;
+  #endregion
+  
+  
+   [SerializeField] private Vector3 barysentricCoordinateToBall = Vector3.zero;
    [SerializeField] private Vector3 centerOfBall = Vector3.zero;
-   
-   
-   private Vector2 p1, p2, p3 = new Vector2();
-
    private float _mass = 0.004f;
 
    public void CollisionCorrection()
@@ -44,16 +48,15 @@ public class BallPower : MonoBehaviour
        
    }
    
-
    public void Start()
     {
         // initial start pos
         _prevPos = transform.position;
         ballpos = _prevPos;
         centerOfBall = ballpos;
+        
     }
-
-    
+   
     private void FixedUpdate()
     {
         
@@ -63,6 +66,7 @@ public class BallPower : MonoBehaviour
         deltaPos = currentPos - _prevPos;
 
         move();
+        
         CollisionCorrection();
     }
     
@@ -81,42 +85,46 @@ public class BallPower : MonoBehaviour
             v0 = myTrekant.mesh.vertices[index_0];
             v1 = myTrekant.mesh.vertices[index_1];
             v2 = myTrekant.mesh.vertices[index_2];
+            vertex0 = v0;
+            vertex1 = v1;
+            vertex2 = v2;
             
             ballpos = new Vector2(transform.position.x, transform.position.z);
             
             Vector3 ballBarysentrisk = Barcentry(v0, v1, v2, ballpos); // Søk etter triangel som ballen er på nå med barysentriske koordinater
-            barysentricCoordinateToBall = Barcentry(v0, v1, v2, ballpos);
-            // Debug.Log("x: "+ ballBarysentrisk.x.ToString() + "y: "+ ballBarysentrisk.y.ToString() + "z:"+ ballBarysentrisk.z.ToString());
+            barysentricCoordinateToBall = ballBarysentrisk;
             
-            if (ballBarysentrisk.x >= 0 && ballBarysentrisk.y >= 0 && ballBarysentrisk.z >= 0) /* barysentriske koordinater mellom 0 og 1. "blir på en måte ""lokalt"" "*/
+            if (ballBarysentrisk.x >= 0 && ballBarysentrisk.y >= 0 && ballBarysentrisk.z >= 0)
             {
-                previousNormal  = Vector3.Cross((v1 - v0), (v2 - v0)); // Normalvektor i planet N = (_v1 - _v0) crossproduct (_v2 - _v0)
+                // Normalvektor i planet N = (_v1 - _v0) crossproduct (_v2 - _v0)
+                currentNormal  = Vector3.Cross((v1 - v0), (v2 - v0)); 
                 
                 // beregn akselasjonsvektor - ligning (8.12)
                 var accelVector = new Vector3(
-                    (previousNormal.x * previousNormal.z),
-                    (previousNormal.y * previousNormal.y) - 1f,
-                    (previousNormal.z * previousNormal.x) ) * Physics.gravity.y;
+                    (currentNormal.x * currentNormal.z),
+                    (currentNormal.y * currentNormal.y) - 1f,
+                    (currentNormal.z * currentNormal.x) ) * Physics.gravity.y;
+
+                // var _accel =
 
                 // Update Velocity
-                var prevVelocity = deltaPos * Time.fixedDeltaTime;
-                currentVelocity = prevVelocity + accelVector * Time.fixedDeltaTime; // ligning (8.14)
+                previousVelocity = deltaPos * Time.fixedDeltaTime;
+                currentVelocity = previousVelocity + accelVector * Time.fixedDeltaTime; // ligning (8.14)
 
                 // Update Position
                 currentPos = _prevPos + currentVelocity * Time.fixedDeltaTime; // ligning (8.15)
                 
                 if (current_Index != previous_Index)
                 {
+                    // Ballen har rullet over på et nytt triangel, og beregner normalen til kollisjonsplanet, se ligning (8.17)
+                    // Korrigere posisjon oppover i normalens retning
+                    // Oppdater hastighetsvektoren, se ligning (8.16)
+                    // Oppdatere posisjon i retning den nye hastighets vektoren
                     var xvec = (previousNormal + currentNormal).normalized;
                     //var _collisionPlane = normalVector + 
-
+                    CollisionCorrection();
                 }
-                // STEG 2 if ( /* ny indeks != forrige */)
-                // STEG 2 {
-                // Ballen har rullet over på et nytt triangel, og beregner normalen til kollisjonsplanet, se ligning (8.17)
-                // Korrigere posisjon oppover i normalens retning
-                // Oppdater hastighetsvektoren, se ligning (8.16)
-                // Oppdatere posisjon i retning den nye hastighets vektoren
+                
             }
             previousNormal = currentNormal;
             previous_Index = current_Index;
@@ -125,30 +133,6 @@ public class BallPower : MonoBehaviour
         }
     }
     
-    private void Update()
-    {
-        // Thomas DS kode
-      //  Vector2 position = new Vector2(transform.position.x, transform.position.y);
-      //  
-      //  //calculates the object's movement direction and speed between frames
-      //  Vector2 speed = position - previousPosition;
-      //  
-      //  //used to determine the rotation axis for an object based on its movement direction.
-      //  Vector2 rotationAxis = Vector2.Perpendicular(speed);
-      //  
-      //  //This determines the axis around which the object will rotate. rotating in the opposite direction of its movement
-      //  transform.Rotate(new Vector3(rotationAxis.x, rotationAxis.y,0),-speed.magnitude * 35, Space.World);
-      //  
-      //  //line updates the previousPosition variable to match the current position. This is important for calculating the speed in the next frame.
-      //  previousPosition = position;
-        
-        
-        
-    }
-
-
-
-
     public Vector3 Barcentry(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 pt)
     {
         Vector2 p12 = p2 - p1;
@@ -182,7 +166,27 @@ public class BallPower : MonoBehaviour
 }
 
 
+// Debug.Log("x: "+ ballBarysentrisk.x.ToString() + "y: "+ ballBarysentrisk.y.ToString() + "z:"+ ballBarysentrisk.z.ToString());
 
+
+
+// private void Update()
+// {
+    // Thomas DS kode
+    //  Vector2 position = new Vector2(transform.position.x, transform.position.y);
+    //  
+    //  //calculates the object's movement direction and speed between frames
+    //  Vector2 speed = position - previousPosition;
+    //  
+    //  //used to determine the rotation axis for an object based on its movement direction.
+    //  Vector2 rotationAxis = Vector2.Perpendicular(speed);
+    //  
+    //  //This determines the axis around which the object will rotate. rotating in the opposite direction of its movement
+    //  transform.Rotate(new Vector3(rotationAxis.x, rotationAxis.y,0),-speed.magnitude * 35, Space.World);
+    //  
+    //  //line updates the previousPosition variable to match the current position. This is important for calculating the speed in the next frame.
+    //  previousPosition = position;
+// }
 
 
 
