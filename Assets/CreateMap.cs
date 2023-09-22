@@ -28,12 +28,12 @@ public class CreateMap : MonoBehaviour
     {
         vertices = new Vector3[]
         {
-            new Vector3(0     ,0.097f  ,0      )       * 10f  ,     // 0
-            new Vector3(0.4f  ,0.005f  ,0      )       * 10f  ,     // 1
-            new Vector3(0     ,0.005f  ,0.4f   )       * 10f  ,     // 2
-            new Vector3(0.4f  ,0.075f  ,0.4f   )       * 10f  ,     // 3
-            new Vector3(0.8f  ,0.007f  ,0.4f   )       * 10f  ,     // 4
-            new Vector3(0.8f  ,0.039f  ,0      )       * 10f        // 5
+            new Vector3(0     ,0.097f  ,0   ),     // 0
+            new Vector3(0.4f  ,0.005f  ,0   ),     // 1
+            new Vector3(0     ,0.005f  ,0.4f),     // 2
+            new Vector3(0.4f  ,0.075f  ,0.4f),     // 3
+            new Vector3(0.8f  ,0.007f  ,0.4f),     // 4
+            new Vector3(0.8f  ,0.039f  ,0   )      // 5
         };
 
         triangles = new int[]

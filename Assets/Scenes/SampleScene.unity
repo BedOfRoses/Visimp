@@ -253,13 +253,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.27992216, y: 0.42993784, z: -0.1382403, w: 0.8471639}
-  m_LocalPosition: {x: -1.551801, y: 4.915111, z: -2.2397428}
+  m_LocalRotation: {x: 0.23761575, y: -0.005384201, z: -0.032518156, w: 0.97079986}
+  m_LocalPosition: {x: 0.377, y: 0.42, z: -0.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 27.451952, y: 358.32703, z: 355.7544}
 --- !u!114 &330585547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -535,7 +535,6 @@ GameObject:
   - component: {fileID: 812888971}
   - component: {fileID: 812888970}
   - component: {fileID: 812888969}
-  - component: {fileID: 812888973}
   - component: {fileID: 812888968}
   m_Layer: 0
   m_Name: Ball
@@ -573,17 +572,18 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 812888966}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 444ea9e362f842d4f841475505f06db1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ballpos: {x: 0, y: 0}
-  deltaPos: {x: 0, y: 0, z: 0}
-  currentPos: {x: 0, y: 0, z: 0}
-  _prevPos: {x: 0, y: 0, z: 0}
+  spawnlocation: {x: 0.1, y: 0.1}
+  deltaPosition: {x: 0, y: 0, z: 0}
+  currentPosition: {x: 0, y: 0, z: 0}
+  previousPosition: {x: 0, y: 0, z: 0}
   currentVelocity: {x: 0, y: 0, z: 0}
   previousVelocity: {x: 0, y: 0, z: 0}
+  accelerationVector: {x: 0, y: 0, z: 0}
   current_Index: 0
   previous_Index: 0
   currentNormal: {x: 0, y: 0, z: 0}
@@ -653,24 +653,12 @@ Transform:
   m_GameObject: {fileID: 812888966}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.1, y: 1.98, z: 0.1}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
+  m_LocalPosition: {x: 0.1, y: -0.088, z: 0.1}
+  m_LocalScale: {x: 0.03, y: 0.03, z: 0.03}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &812888973
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 812888966}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79ce4d69a4ba6e64cb5eeb90a423bc02, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
