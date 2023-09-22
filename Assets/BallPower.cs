@@ -1,16 +1,27 @@
+using System;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class BallPower : MonoBehaviour
 {
+
+    #region Posisjon Spawning
+
+    [SerializeField] private Vector2 spawnlocation = Vector2.zero;
+    
+
+    #endregion
     
   #region hastighet og vector 3 for hastighet og posisjon
-  [SerializeField] private Vector2 ballpos = Vector2.zero;
-  [SerializeField]  private Vector3 deltaPos = Vector3.zero;
-  [SerializeField]  private Vector3 currentPos = Vector3.zero;
-  [SerializeField] private Vector3 _prevPos;
+  [SerializeField]  private Vector3 deltaPosition = Vector3.zero;
+  [SerializeField]  private Vector3 currentPosition = Vector3.zero;
+  [SerializeField] private Vector3 previousPosition = Vector3.zero;
   [SerializeField]  private Vector3 currentVelocity = Vector3.zero;
   [SerializeField] private Vector3 previousVelocity = Vector3.zero;
+  [SerializeField] private Vector3 accelerationVector = Vector3.zero;
   #endregion
+  
+  
   
   #region index for triangler
   [SerializeField]  private int current_Index;
@@ -25,7 +36,6 @@ public class BallPower : MonoBehaviour
   #region referanser
   public CreateMap myTrekant;
   #endregion
-
   
   #region Vertexer
   [SerializeField] private Vector3 vertex0 = Vector3.zero;
@@ -43,31 +53,32 @@ public class BallPower : MonoBehaviour
        var k = barysentricCoordinateToBall; // baryCoordForBall
        var center = centerOfBall;
        var dVec = k - center;
-       var s = center - currentPos;
+       var s = center - currentPosition;
        var bVec = currentNormal * Vector3.Dot(dVec, k);
        
    }
    
    public void Start()
-    {
-        // initial start pos
-        _prevPos = transform.position;
-        ballpos = _prevPos;
-        centerOfBall = ballpos;
-        
+   {
+       transform.position = new Vector3(spawnlocation.x, 0, spawnlocation.y);
+       currentPosition = transform.position;
     }
    
     private void FixedUpdate()
     {
-        
-        ballpos = new Vector2(transform.position.x, transform.position.z);
-        currentPos = transform.position;
-        centerOfBall = currentPos; // this is just to have variation of the name in my code
-        deltaPos = currentPos - _prevPos;
+       //  ballpos = new Vector2(transform.position.x, transform.position.z);
+       //  currentPosition = transform.position;
+       //  centerOfBall = currentPos; // this is just to have variation of the name in my code
+       //  deltaPos = currentPos - _prevPos;
 
+
+       // deltaPosition = currentPosition - previousPosition;
+       
+       // Debug.Log("deltaPosition" +  deltaPosition.ToString("F2"));
+       
         move();
         
-        CollisionCorrection();
+        //CollisionCorrection();
     }
     
     void move()
@@ -88,80 +99,109 @@ public class BallPower : MonoBehaviour
             vertex0 = v0;
             vertex1 = v1;
             vertex2 = v2;
+           
             
-            ballpos = new Vector2(transform.position.x, transform.position.z);
+            Vector3 ballBarysentrisk = Barcentry(
+                new Vector2(v0.x, v0.z), 
+                new Vector2(v1.x,v1.z) ,
+                new Vector2(v2.x,v2.z), 
+                new Vector2(transform.position.x, transform.position.z)); // Søk etter triangel som ballen er på nå med barysentriske koordinater
             
-            Vector3 ballBarysentrisk = Barcentry(v0, v1, v2, ballpos); // Søk etter triangel som ballen er på nå med barysentriske koordinater
-            barysentricCoordinateToBall = ballBarysentrisk;
             
-            if (ballBarysentrisk.x >= 0 && ballBarysentrisk.y >= 0 && ballBarysentrisk.z >= 0)
+            
+            if (ballBarysentrisk is{x:>= 0, y:>= 0, z:>= 0})
             {
                 // Normalvektor i planet N = (_v1 - _v0) crossproduct (_v2 - _v0)
-                currentNormal  = Vector3.Cross((v1 - v0), (v2 - v0)); 
+                currentNormal  = Vector3.Cross((v1 - v0), (v2 - v0)).normalized; 
                 
                 // beregn akselasjonsvektor - ligning (8.12)
-                var accelVector = new Vector3(
+                accelerationVector = new Vector3(
                     (currentNormal.x * currentNormal.z),
                     (currentNormal.y * currentNormal.y) - 1f,
                     (currentNormal.z * currentNormal.x) ) * Physics.gravity.y;
 
-                // var _accel =
-
-                // Update Velocity
-                previousVelocity = deltaPos * Time.fixedDeltaTime;
-                currentVelocity = previousVelocity + accelVector * Time.fixedDeltaTime; // ligning (8.14)
-
-                // Update Position
-                currentPos = _prevPos + currentVelocity * Time.fixedDeltaTime; // ligning (8.15)
+               
                 
-                if (current_Index != previous_Index)
-                {
-                    // Ballen har rullet over på et nytt triangel, og beregner normalen til kollisjonsplanet, se ligning (8.17)
-                    // Korrigere posisjon oppover i normalens retning
-                    // Oppdater hastighetsvektoren, se ligning (8.16)
-                    // Oppdatere posisjon i retning den nye hastighets vektoren
-                    var xvec = (previousNormal + currentNormal).normalized;
-                    //var _collisionPlane = normalVector + 
-                    CollisionCorrection();
-                }
+                // Update Velocity ( Vk+1 = Vk + a*deltatime
+                currentVelocity = previousVelocity + accelerationVector * Time.fixedDeltaTime; // ligning (8.14)
+                // previousVelocity = deltaPos * Time.fixedDeltaTime;
+
+                // Update Position ( Pk+1 = Pk + Vk*deltaTime
+                currentPosition = previousPosition + previousVelocity * Time.fixedDeltaTime; // ligning (8.15)
                 
+                this.transform.position = currentPosition;
+                
+                
+
+
+                // STEG 2 if (current_Index != previous_Index)
+                // STEG 2 {
+                // STEG 2     // Ballen har rullet over på et nytt triangel, og beregner normalen til kollisjonsplanet, se ligning (8.17)
+                // STEG 2     // Korrigere posisjon oppover i normalens retning
+                // STEG 2     // Oppdater hastighetsvektoren, se ligning (8.16)
+                // STEG 2     // Oppdatere posisjon i retning den nye hastighets vektoren
+                // STEG 2     var xvec = (previousNormal + currentNormal).normalized;
+                // STEG 2     //var _collisionPlane = normalVector + 
+                // STEG 2     CollisionCorrection();
+                // STEG 2 }
+
             }
+
+            previousPosition = currentPosition;
+            previousVelocity = currentVelocity;
             previousNormal = currentNormal;
             previous_Index = current_Index;
             
             // Oppdater gammel normal og indeks
         }
     }
-    
+
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(transform.position, currentNormal);
+        
+        Gizmos.color = Color.blue;
+        Gizmos.DrawRay(transform.position, previousVelocity);
+        
+        // Gizmos.draw
+        
+    }
+
+
     public Vector3 Barcentry(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 pt)
     {
         Vector2 p12 = p2 - p1;
         Vector2 p13 = p3 - p1;
         Vector3 nn = Vector3.Cross(new Vector3(p12.x, 0, p12.y), new Vector3(p13.x, 0, p13.y));
         float areal_123 = nn.magnitude;
-        // Debug.Log("areal: " + areal_123);
-        Vector3 baryc;
+        Vector3 baryc = default; 
        
         // u
-        Vector2 q = p2 - pt;
-        Vector2 p = p3 - pt;
+        Vector2 p = p2 - pt;
+        Vector2 q = p3 - pt;
         nn = Vector3.Cross(new Vector3(p.x,0,p.y), new Vector3(q.x,0,q.y));
         baryc.x = nn.y / areal_123;
        
         // v
-        q = p3 - pt;
-        p = p1 - pt;
+        p = p3 - pt;
+        q = p1 - pt;
         nn = Vector3.Cross(new Vector3(p.x,0,p.y), new Vector3(q.x,0,q.y));
         baryc.y = nn.y / areal_123;
         
         // w
-        q = p1 - pt;
-        p = p2 - pt;
+        p = p1 - pt;
+        q = p2 - pt;
         nn = Vector3.Cross(new Vector3(p.x,0,p.y), new Vector3(q.x,0,q.y));
         baryc.z = nn.y / areal_123;
         
+        // Debug.Log("Baryc"+ baryc.ToString("F2"));
         return baryc;
     }
+    
+    
+    
     
 }
 
