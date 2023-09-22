@@ -6,10 +6,7 @@ public class BallPower : MonoBehaviour
 {
 
     #region Posisjon Spawning
-
     [SerializeField] private Vector2 spawnlocation = Vector2.zero;
-    
-
     #endregion
     
   #region hastighet og vector 3 for hastighet og posisjon
@@ -43,15 +40,12 @@ public class BallPower : MonoBehaviour
   [SerializeField] private Vector3 vertex2 = Vector3.zero;
   #endregion
   
-  
    [SerializeField] private Vector3 barysentricCoordinateToBall = Vector3.zero;
-   [SerializeField] private Vector3 centerOfBall = Vector3.zero;
-   private float _mass = 0.004f;
 
    public void CollisionCorrection()
    {
        var k = barysentricCoordinateToBall; // baryCoordForBall
-       var center = centerOfBall;
+       var center = transform.position;
        var dVec = k - center;
        var s = center - currentPosition;
        var bVec = currentNormal * Vector3.Dot(dVec, k);
@@ -60,25 +54,17 @@ public class BallPower : MonoBehaviour
    
    public void Start()
    {
-       transform.position = new Vector3(spawnlocation.x, 0, spawnlocation.y);
-       currentPosition = transform.position;
-    }
+       transform.position = new Vector3(0, 0.097f, 0);
+       // transform.position = new Vector3(spawnlocation.x, 0, spawnlocation.y);
+       // currentPosition = transform.position;
+   }
    
     private void FixedUpdate()
     {
-       //  ballpos = new Vector2(transform.position.x, transform.position.z);
-       //  currentPosition = transform.position;
-       //  centerOfBall = currentPos; // this is just to have variation of the name in my code
-       //  deltaPos = currentPos - _prevPos;
-
-
-       // deltaPosition = currentPosition - previousPosition;
-       
-       // Debug.Log("deltaPosition" +  deltaPosition.ToString("F2"));
-       
         move();
-        
         //CollisionCorrection();
+        
+        
     }
     
     void move()
@@ -96,43 +82,43 @@ public class BallPower : MonoBehaviour
             v0 = myTrekant.mesh.vertices[index_0];
             v1 = myTrekant.mesh.vertices[index_1];
             v2 = myTrekant.mesh.vertices[index_2];
-            vertex0 = v0;
-            vertex1 = v1;
-            vertex2 = v2;
+            vertex0 = new Vector3(v0.x,v0.y,v0.z);
+            vertex1 = new Vector3(v1.x,v1.y,v1.z);
+            vertex2 = new Vector3(v2.x, v2.y,v2.z);
            
             
-            Vector3 ballBarysentrisk = Barcentry(
+            barysentricCoordinateToBall = Barcentry(
                 new Vector2(v0.x, v0.z), 
                 new Vector2(v1.x,v1.z) ,
                 new Vector2(v2.x,v2.z), 
-                new Vector2(transform.position.x, transform.position.z)); // Søk etter triangel som ballen er på nå med barysentriske koordinater
+                new Vector2(transform.position.x, transform.position.z));
             
             
             
-            if (ballBarysentrisk is{x:>= 0, y:>= 0, z:>= 0})
+            if (barysentricCoordinateToBall is{x:>= 0, y:>= 0, z:>= 0})
             {
                 // Normalvektor i planet N = (_v1 - _v0) crossproduct (_v2 - _v0)
                 currentNormal  = Vector3.Cross((v1 - v0), (v2 - v0)).normalized; 
                 
                 // beregn akselasjonsvektor - ligning (8.12)
                 accelerationVector = new Vector3(
-                    (currentNormal.x * currentNormal.z),
+                    (currentNormal.x * currentNormal.y),
                     (currentNormal.y * currentNormal.y) - 1f,
-                    (currentNormal.z * currentNormal.x) ) * Physics.gravity.y;
-
-               
+                    (currentNormal.z * currentNormal.y) ) * -Physics.gravity.y;
                 
-                // Update Velocity ( Vk+1 = Vk + a*deltatime
+                // Update Velocity ( Vk+1 = Vk + a*deltatime )
                 currentVelocity = previousVelocity + accelerationVector * Time.fixedDeltaTime; // ligning (8.14)
+                previousVelocity = currentVelocity;
                 // previousVelocity = deltaPos * Time.fixedDeltaTime;
 
-                // Update Position ( Pk+1 = Pk + Vk*deltaTime
+                // Update Position ( Pk+1 = Pk + Vk*deltaTime )
                 currentPosition = previousPosition + previousVelocity * Time.fixedDeltaTime; // ligning (8.15)
+                previousPosition = currentPosition;
+               
+                
                 
                 this.transform.position = currentPosition;
                 
-                
-
 
                 // STEG 2 if (current_Index != previous_Index)
                 // STEG 2 {
@@ -147,8 +133,8 @@ public class BallPower : MonoBehaviour
 
             }
 
-            previousPosition = currentPosition;
-            previousVelocity = currentVelocity;
+           //  previousPosition = currentPosition;
+           //  previousVelocity = currentVelocity;
             previousNormal = currentNormal;
             previous_Index = current_Index;
             
@@ -162,11 +148,14 @@ public class BallPower : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawRay(transform.position, currentNormal);
         
+        Gizmos.color = Color.green;
+        Gizmos.DrawRay(transform.position, currentVelocity);
+
         Gizmos.color = Color.blue;
-        Gizmos.DrawRay(transform.position, previousVelocity);
-        
+        Gizmos.DrawRay(transform.position, accelerationVector);
+
         // Gizmos.draw
-        
+
     }
 
 
