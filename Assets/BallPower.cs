@@ -155,11 +155,11 @@ public class BallPower : MonoBehaviour
                     // CollisionCorrection();
                 }
                 
-                
+                previousNormal = currentNormal;
+                previous_Index = current_Index;
             }
 
-            previousNormal = currentNormal;
-            previous_Index = current_Index;
+            
             
             // Oppdater gammel normal og indeks
         }
