@@ -58,29 +58,12 @@ public class BallPower : MonoBehaviour
 
    public void Start()
    { 
-       
-       // transform.position = new Vector3(0, 0.097f, 0);
-
-     // transform.position = new Vector3(
-     //     spawnPosition.x, 
-     //     myTrekant.GetSurfaceHeight(new Vector2(spawnPosition.x,spawnPosition.y)), 
-     //     spawnPosition.y);
-     
        var boi = myTrekant.GetSurfaceHeight(new Vector2(spawnPosition.x, spawnPosition.y));
        Debug.Log("Height: " + boi);
-
        var newSpawnpos = new Vector3(spawnPosition.x, boi, spawnPosition.y);
-
        currentPosition = newSpawnpos;
-
        transform.position = currentPosition;
-       
        previousPosition = currentPosition;
-
-
-
-       // transform.position = new Vector3(spawnlocation.x, 0, spawnlocation.y);
-       // currentPosition = transform.position;
    }
 
   
