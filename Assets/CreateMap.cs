@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
@@ -38,9 +39,9 @@ public class CreateMap : MonoBehaviour
         triangles = new int[]
         {
             2,1,0,    
-          3,1,2,    
-           1,3,4,    
-          // 4,5,1 
+            3,1,2,    
+            1,3,4,    
+            4,5,1 
         };
     }
     void UpdateMesh()
@@ -88,6 +89,15 @@ public class CreateMap : MonoBehaviour
         return 0f;
     }
 
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.gray;
+        
+        //Første trekant
+        // Gizmos.DrawRay();
+        
+    }
 
     private static Vector3 BarycentricFunc(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 pt)
     {

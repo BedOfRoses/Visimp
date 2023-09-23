@@ -106,8 +106,8 @@ public class BallPower : MonoBehaviour
             
             barysentricCoordinateToBall = BarycentricFunction(
                 new Vector2(v0.x, v0.z), 
-                new Vector2(v1.x,v1.z) ,
-                new Vector2(v2.x,v2.z), 
+                new Vector2(v1.x, v1.z) ,
+                new Vector2(v2.x, v2.z), 
                 new Vector2(transform.position.x, transform.position.z));
             
             
@@ -116,6 +116,7 @@ public class BallPower : MonoBehaviour
             {
                 // Normalvektor i planet N = (_v1 - _v0) crossproduct (_v2 - _v0)
                  currentNormal  = Vector3.Cross((v1 - v0), (v2 - v0)).normalized; //WORKED HERE
+               
                 
                 // beregn akselasjonsvektor - ligning (8.12)
                 accelerationVector = new Vector3(
@@ -142,41 +143,21 @@ public class BallPower : MonoBehaviour
                 if (current_Index != previous_Index)
                 {
                     collitionNormal = (previousNormal + currentNormal).normalized;
-
-                    // velocityCorrection =
-                    //     previousVelocity - 2 * Vector3.ProjectOnPlane(previousVelocity, collitionNormal);
-
+                    
                     velocityCorrection = previousVelocity -
                                          2 * Vector3.Dot(previousVelocity, collitionNormal) * collitionNormal;
-                        
-                    Debug.Log("Velocity Correction: "+ velocityCorrection.ToString("F2"));
-
                     previousVelocity = velocityCorrection;
-                    
-                    //currentVelocity = previousVelocity + accelerationVector * Time.fixedDeltaTime; // ligning (8.14)
-                    //previousVelocity = currentVelocity;
-                    
                     
                     // update pos
                     currentPosition = previousPosition + previousVelocity * Time.fixedDeltaTime; // ligning (8.15)
                     previousPosition = currentPosition;
-
                     transform.position = currentPosition;
-
-                    // Ballen har rullet over på et nytt triangel, og beregner normalen til kollisjonsplanet, se ligning (8.17)
-                    // Korrigere posisjon oppover i normalens retning
-                    // Oppdater hastighetsvektoren, se ligning (8.16)
-                    // Oppdatere posisjon i retning den nye hastighets vektoren
-                    //var _collisionPlane = normalVector + 
-
-
                     // CollisionCorrection();
                 }
-
+                
+                
             }
 
-            //  previousPosition = currentPosition;
-            //  previousVelocity = currentVelocity;
             previousNormal = currentNormal;
             previous_Index = current_Index;
             

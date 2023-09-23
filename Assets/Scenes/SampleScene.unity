@@ -584,16 +584,18 @@ MonoBehaviour:
   currentVelocity: {x: 0, y: 0, z: 0}
   previousVelocity: {x: 0, y: 0, z: 0}
   accelerationVector: {x: 0, y: 0, z: 0}
+  velocityCorrection: {x: 0, y: 0, z: 0}
   current_Index: 0
   previous_Index: 0
   currentNormal: {x: 0, y: 0, z: 0}
   previousNormal: {x: 0, y: 0, z: 0}
+  collitionNormal: {x: 0, y: 0, z: 0}
   myTrekant: {fileID: 637265904}
   vertex0: {x: 0, y: 0, z: 0}
   vertex1: {x: 0, y: 0, z: 0}
   vertex2: {x: 0, y: 0, z: 0}
   barysentricCoordinateToBall: {x: 0, y: 0, z: 0}
-  centerOfBall: {x: 0, y: 0, z: 0}
+  spawnPosition: {x: 0.06, y: 0.03}
 --- !u!23 &812888970
 MeshRenderer:
   m_ObjectHideFlags: 0
