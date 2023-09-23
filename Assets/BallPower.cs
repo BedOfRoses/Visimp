@@ -141,17 +141,28 @@ public class BallPower : MonoBehaviour
                 
 
                 if (current_Index != previous_Index)
-                {
+                { 
                     collitionNormal = (previousNormal + currentNormal).normalized;
                     
+                    
+                    //velocityCorrection = previousVelocity -
+                    //                     2 * Vector3.Dot(previousVelocity, collitionNormal) * collitionNormal;
                     velocityCorrection = previousVelocity -
-                                         2 * Vector3.Dot(previousVelocity, collitionNormal) * collitionNormal;
-                    previousVelocity = velocityCorrection;
+                                         2 * Vector3.Project(previousVelocity, collitionNormal); 
+                    
+                    previousVelocity = velocityCorrection + accelerationVector * Time.fixedDeltaTime;
                     
                     // update pos
                     currentPosition = previousPosition + previousVelocity * Time.fixedDeltaTime; // ligning (8.15)
+                    
+                    // var fixedDeltasqr = Time.fixedDeltaTime * Time.fixedDeltaTime;
+                    // currentPosition = previousPosition + previousVelocity * Time.fixedDeltaTime +
+                    //                   (0.5f * accelerationVector) * fixedDeltasqr;
+                    
+                    
                     previousPosition = currentPosition;
                     transform.position = currentPosition;
+                    
                     // CollisionCorrection();
                 }
                 
@@ -161,7 +172,6 @@ public class BallPower : MonoBehaviour
 
             
             
-            // Oppdater gammel normal og indeks
         }
     }
 
@@ -174,7 +184,10 @@ public class BallPower : MonoBehaviour
         
         Gizmos.color = Color.green;
         Gizmos.DrawRay(position, currentVelocity);
-        
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawRay(position, collitionNormal);
+
 
         // Gizmos.color = Color.blue;
         // Gizmos.DrawRay(position, accelerationVector);
