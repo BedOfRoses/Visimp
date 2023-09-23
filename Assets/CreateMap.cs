@@ -39,7 +39,7 @@ public class CreateMap : MonoBehaviour
         {
             2,1,0,    
           3,1,2,    
-          // 1,3,4,    
+           1,3,4,    
           // 4,5,1 
         };
     }
