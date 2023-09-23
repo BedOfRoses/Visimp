@@ -17,6 +17,7 @@ public class BallPower : MonoBehaviour
   [SerializeField]  private Vector3 currentVelocity = Vector3.zero;
   [SerializeField] private Vector3 previousVelocity = Vector3.zero;
   [SerializeField] private Vector3 accelerationVector = Vector3.zero;
+  [SerializeField] private Vector3 velocityCorrection = Vector3.zero;
   #endregion
   
   
@@ -29,6 +30,8 @@ public class BallPower : MonoBehaviour
   #region normalen til triangler
   [SerializeField]  private Vector3 currentNormal = Vector3.zero;  // n - normal-vektor
   [SerializeField]  private Vector3 previousNormal = Vector3.zero; // m - normal-vektor
+  [SerializeField] private Vector3 collitionNormal = Vector3.zero;
+  
   #endregion
 
   #region referanser
@@ -51,7 +54,8 @@ public class BallPower : MonoBehaviour
        var dVec = k - center;
        var s = center - currentPosition;
        var bVec = currentNormal * Vector3.Dot(dVec, k);
-       
+       // transform.position *= barysentricCoordinateToBall.y;
+
    }
 
    
@@ -94,6 +98,7 @@ public class BallPower : MonoBehaviour
             v0 = myTrekant.mesh.vertices[index_0];
             v1 = myTrekant.mesh.vertices[index_1];
             v2 = myTrekant.mesh.vertices[index_2];
+            
             vertex0 = new Vector3(v0.x,v0.y,v0.z);
             vertex1 = new Vector3(v1.x,v1.y,v1.z);
             vertex2 = new Vector3(v2.x, v2.y,v2.z);
@@ -110,7 +115,7 @@ public class BallPower : MonoBehaviour
             if (barysentricCoordinateToBall is{x:>= 0, y:>= 0, z:>= 0})
             {
                 // Normalvektor i planet N = (_v1 - _v0) crossproduct (_v2 - _v0)
-                currentNormal  = Vector3.Cross((v1 - v0), (v2 - v0)).normalized; 
+                 currentNormal  = Vector3.Cross((v1 - v0), (v2 - v0)).normalized; //WORKED HERE
                 
                 // beregn akselasjonsvektor - ligning (8.12)
                 accelerationVector = new Vector3(
@@ -134,16 +139,39 @@ public class BallPower : MonoBehaviour
                 this.transform.position = currentPosition;
                 
 
-                // STEG 2 if (current_Index != previous_Index)
-                // STEG 2 {
-                // STEG 2     // Ballen har rullet over på et nytt triangel, og beregner normalen til kollisjonsplanet, se ligning (8.17)
-                // STEG 2     // Korrigere posisjon oppover i normalens retning
-                // STEG 2     // Oppdater hastighetsvektoren, se ligning (8.16)
-                // STEG 2     // Oppdatere posisjon i retning den nye hastighets vektoren
-                // STEG 2     var xvec = (previousNormal + currentNormal).normalized;
-                // STEG 2     //var _collisionPlane = normalVector + 
-                // STEG 2     CollisionCorrection();
-                // STEG 2 }
+                if (current_Index != previous_Index)
+                {
+                    collitionNormal = (previousNormal + currentNormal).normalized;
+
+                    // velocityCorrection =
+                    //     previousVelocity - 2 * Vector3.ProjectOnPlane(previousVelocity, collitionNormal);
+
+                    velocityCorrection = previousVelocity -
+                                         2 * Vector3.Dot(previousVelocity, collitionNormal) * collitionNormal;
+                        
+                    Debug.Log("Velocity Correction: "+ velocityCorrection.ToString("F2"));
+
+                    previousVelocity = velocityCorrection;
+                    
+                    //currentVelocity = previousVelocity + accelerationVector * Time.fixedDeltaTime; // ligning (8.14)
+                    //previousVelocity = currentVelocity;
+                    
+                    
+                    // update pos
+                    currentPosition = previousPosition + previousVelocity * Time.fixedDeltaTime; // ligning (8.15)
+                    previousPosition = currentPosition;
+
+                    transform.position = currentPosition;
+
+                    // Ballen har rullet over på et nytt triangel, og beregner normalen til kollisjonsplanet, se ligning (8.17)
+                    // Korrigere posisjon oppover i normalens retning
+                    // Oppdater hastighetsvektoren, se ligning (8.16)
+                    // Oppdatere posisjon i retning den nye hastighets vektoren
+                    //var _collisionPlane = normalVector + 
+
+
+                    // CollisionCorrection();
+                }
 
             }
 
@@ -165,9 +193,10 @@ public class BallPower : MonoBehaviour
         
         Gizmos.color = Color.green;
         Gizmos.DrawRay(position, currentVelocity);
+        
 
-        Gizmos.color = Color.blue;
-        Gizmos.DrawRay(position, accelerationVector);
+        // Gizmos.color = Color.blue;
+        // Gizmos.DrawRay(position, accelerationVector);
 
         // Gizmos.draw
 
