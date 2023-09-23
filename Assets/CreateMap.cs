@@ -23,7 +23,6 @@ public class CreateMap : MonoBehaviour
         meshji.material.staticFriction = statFrick;
     }
     
-
     void CreateShape()
     {
         vertices = new Vector3[]
@@ -39,13 +38,11 @@ public class CreateMap : MonoBehaviour
         triangles = new int[]
         {
             2,1,0,    
-          // 3,1,2,    
+          3,1,2,    
           // 1,3,4,    
           // 4,5,1 
         };
     }
-
-
     void UpdateMesh()
     {
         mesh.Clear();
