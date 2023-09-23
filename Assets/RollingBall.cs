@@ -37,7 +37,7 @@ public class RollingBall : MonoBehaviour
   
     [SerializeField] private Vector3 barysentricCoordinateToBall = Vector3.zero;
     [SerializeField] private Vector3 centerOfBall = Vector3.zero;
-    private float _mass = 0.004f;
+    [SerializeField] private float _mass = 0.004f;
 
 
     [SerializeField] private Vector3 currentTriangle = Vector3.zero;
@@ -80,14 +80,15 @@ public class RollingBall : MonoBehaviour
                     currentNormal.z * currentNormal.y
                 );
 
+                // Oppdaterer hastighet ligning ( 8 . 1 4 )
                 currentVelocity = previousVelocity + accelerationVector * Time.fixedDeltaTime;
 
+                // Oppdaterer posisjon ligning  ( 8 . 1 5 )
                 currentPosition = previousPosition + previousVelocity * Time.fixedDeltaTime;
 
-                transform.position += currentPosition; //TODO MÅ BRUKE DEN
+                // ikke bruk += bljyat
+                transform.position = currentPosition; //TODO MÅ BRUKE DEN
                 
-                // Oppdaterer hastighet og posisjon
-                // ligning ( 8 . 1 4 ) og ( 8 . 1 5 )
                 
                 if (current_Index != previous_Index)
                 {
@@ -116,13 +117,8 @@ public class RollingBall : MonoBehaviour
     private void FixedUpdate()
     {
         
- 
         
         Move();
-        
-        
-        
-        
         
         
     }
