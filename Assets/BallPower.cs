@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 
 public class BallPower : MonoBehaviour
@@ -41,6 +42,7 @@ public class BallPower : MonoBehaviour
   #endregion
   
    [SerializeField] private Vector3 barysentricCoordinateToBall = Vector3.zero;
+   [SerializeField] private Vector2 spawnPosition = Vector2.zero;
 
    public void CollisionCorrection()
    {
@@ -51,20 +53,47 @@ public class BallPower : MonoBehaviour
        var bVec = currentNormal * Vector3.Dot(dVec, k);
        
    }
+
    
+
    public void Start()
-   {
-       transform.position = new Vector3(0, 0.097f, 0);
+   { 
+       
+       // transform.position = new Vector3(0, 0.097f, 0);
+
+     // transform.position = new Vector3(
+     //     spawnPosition.x, 
+     //     myTrekant.GetSurfaceHeight(new Vector2(spawnPosition.x,spawnPosition.y)), 
+     //     spawnPosition.y);
+     
+       var boi = myTrekant.GetSurfaceHeight(new Vector2(spawnPosition.x, spawnPosition.y));
+       Debug.Log("Height: " + boi);
+
+       var newSpawnpos = new Vector3(spawnPosition.x, boi, spawnPosition.y);
+
+       currentPosition = newSpawnpos;
+
+       transform.position = currentPosition;
+       
+       previousPosition = currentPosition;
+
+
+
        // transform.position = new Vector3(spawnlocation.x, 0, spawnlocation.y);
        // currentPosition = transform.position;
    }
-   
-    private void FixedUpdate()
+
+  
+
+   private void FixedUpdate()
     {
+        
+        
         move();
         //CollisionCorrection();
-        
-        
+
+        deltaPosition = currentPosition - previousPosition;
+
     }
     
     void move()
@@ -87,7 +116,7 @@ public class BallPower : MonoBehaviour
             vertex2 = new Vector3(v2.x, v2.y,v2.z);
            
             
-            barysentricCoordinateToBall = Barcentry(
+            barysentricCoordinateToBall = BarycentricFunction(
                 new Vector2(v0.x, v0.z), 
                 new Vector2(v1.x,v1.z) ,
                 new Vector2(v2.x,v2.z), 
@@ -106,11 +135,13 @@ public class BallPower : MonoBehaviour
                     (currentNormal.y * currentNormal.y) - 1f,
                     (currentNormal.z * currentNormal.y) ) * -Physics.gravity.y;
                 
+                // Oppdaterer hastighet ligning ( 8 . 1 4 )
                 // Update Velocity ( Vk+1 = Vk + a*deltatime )
                 currentVelocity = previousVelocity + accelerationVector * Time.fixedDeltaTime; // ligning (8.14)
                 previousVelocity = currentVelocity;
                 // previousVelocity = deltaPos * Time.fixedDeltaTime;
 
+                // Oppdaterer posisjon ligning  ( 8 . 1 5 )
                 // Update Position ( Pk+1 = Pk + Vk*deltaTime )
                 currentPosition = previousPosition + previousVelocity * Time.fixedDeltaTime; // ligning (8.15)
                 previousPosition = currentPosition;
@@ -133,8 +164,8 @@ public class BallPower : MonoBehaviour
 
             }
 
-           //  previousPosition = currentPosition;
-           //  previousVelocity = currentVelocity;
+            //  previousPosition = currentPosition;
+            //  previousVelocity = currentVelocity;
             previousNormal = currentNormal;
             previous_Index = current_Index;
             
@@ -145,21 +176,22 @@ public class BallPower : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        var position = transform.position;
         Gizmos.color = Color.red;
-        Gizmos.DrawRay(transform.position, currentNormal);
+        Gizmos.DrawRay(position, currentNormal);
         
         Gizmos.color = Color.green;
-        Gizmos.DrawRay(transform.position, currentVelocity);
+        Gizmos.DrawRay(position, currentVelocity);
 
         Gizmos.color = Color.blue;
-        Gizmos.DrawRay(transform.position, accelerationVector);
+        Gizmos.DrawRay(position, accelerationVector);
 
         // Gizmos.draw
 
     }
 
 
-    public Vector3 Barcentry(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 pt)
+    private static Vector3 BarycentricFunction(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 pt)
     {
         Vector2 p12 = p2 - p1;
         Vector2 p13 = p3 - p1;
