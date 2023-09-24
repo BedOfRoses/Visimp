@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
@@ -130,7 +133,66 @@ public class CreateMap : MonoBehaviour
     }
 
 
-    
+
+    private void ReadVerticesData(string nameOfFile)
+    {
+
+        string filepath = Path.Combine(Application.streamingAssetsPath, nameOfFile);
+
+
+        List<Vector3> mVertices = new List<Vector3>();
+        
+        if (File.Exists(filepath))
+        {
+            
+            var tempText = File.ReadAllLines(filepath);
+            
+            if (tempText.Length > 0)
+            {
+                // får første tallet i fil som er hvor mange vertices vi har
+                int howManyVertices = int.Parse(tempText[0]);
+                
+                // Allocater mengden vertices
+                mVertices.Capacity = howManyVertices;
+
+                for (var i = 1; i <= howManyVertices; i++)
+                {
+                    var iterator = tempText[i].Split(' '); // splitter opp mellom mellomrommet
+                    
+                    var _newVertex = new Vector3(
+                        float.Parse(iterator[0]),
+                        float.Parse(iterator[1]),
+                        float.Parse(iterator[2]));
+                    
+                    mVertices.Add(_newVertex);
+                    
+
+
+                }
+
+                vertices = mVertices.ToArray();
+
+            }
+
+            
+
+
+        }
+        
+        else
+        {
+            Debug.Log("Fant ikke fil");
+        }
+        
+
+    }
+
+
+
+    private void ReadTriangleData(string nameOfFile)
+    {
+        
+    }
     
     
     
