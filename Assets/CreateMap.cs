@@ -17,8 +17,8 @@ public class CreateMap : MonoBehaviour
     public Vector3[] vertices;
     public int[] triangles;
 
-    [SerializeField] private Vector3[] m_Vertices = default;
-    [SerializeField] private int[] m_Triangles = default;
+    // [SerializeField] private Vector3[] m_Vertices = default;
+    // [SerializeField] private int[] m_Triangles = default;
 
     [SerializeField] private string verticesPathName;
     [SerializeField] private string trianglesPathName;
@@ -28,10 +28,13 @@ public class CreateMap : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
         
-        CreateNewShape();
-        UpdateNewMesh();
-        //CreateShape();
-        //UpdateMesh();
+        //With readfile functionality
+        // CreateNewShape();
+        // UpdateNewMesh();
+        
+        //Without readfile functionality
+        CreateShape();
+        UpdateMesh();
         
         MeshCollider meshji = gameObject.AddComponent(typeof(MeshCollider)) as MeshCollider;
         meshji.material.dynamicFriction = dynFrick;
@@ -42,8 +45,8 @@ public class CreateMap : MonoBehaviour
     private void UpdateNewMesh()
     {
         mesh.Clear();
-        mesh.vertices = m_Vertices;
-        mesh.triangles = m_Triangles;
+        mesh.vertices = vertices;
+        mesh.triangles = triangles;
     }
 
     private void CreateNewShape()
@@ -83,8 +86,8 @@ public class CreateMap : MonoBehaviour
     {
         // source https://github.com/haldorj/3Dprog22/blob/main/triangulation.cpp
         
-        Debug.Log("triangles.Length: " + triangles.Length);
-        Debug.Log("mesh.triangles.Length: " + mesh.triangles.Length);
+       //  Debug.Log("triangles.Length: " + triangles.Length);
+       //  Debug.Log("mesh.triangles.Length: " + mesh.triangles.Length);
         
         // for (var i = 0; i < triangles.Length; i++)
         for (var i = 0; i < mesh.triangles.Length; i++)
@@ -173,34 +176,42 @@ public class CreateMap : MonoBehaviour
             
             var tempText = File.ReadAllLines(filepath);
 
-            foreach (var VARIABLE in tempText)
-            {
-                Debug.Log(VARIABLE);
+           // foreach (var VARIABLE in tempText)
+           // {
+           //     Debug.Log(VARIABLE);
+           // }
 
-            }
-
-            CultureInfo cult = new CultureInfo(3);
+            CultureInfo cult = new CultureInfo(3); // tror ikke denne blir brukt
             
             
             if (tempText.Length > 0)
             {
                 // får første tallet i fil som er hvor mange vertices vi har
                 int howManyVertices = int.Parse(tempText[0]);
+               //  Debug.Log("HowMANY VERTIC" + howManyVertices);
                 
                 // Allocater mengden vertices
                 mVertices.Capacity = howManyVertices;
-
+                
+                CultureInfo cultureInfo = new CultureInfo("en-US");
+                
                 for (var i = 1; i <= howManyVertices; i++)
                 {
                     var iterator = tempText[i].Split(' '); // splitter opp mellom mellomrommet
                     
-                    var _newVertex = new Vector3(
-                        float.Parse(iterator[0]),
-                        float.Parse(iterator[1]),
-                        float.Parse(iterator[2]));
+                    
+                    float parse0 = float.Parse(iterator[0], cultureInfo);
+                    float parse1 = float.Parse(iterator[1], cultureInfo);
+                    float parse2 = float.Parse(iterator[2], cultureInfo);
+
+                    var _newVertex = new Vector3(parse0, parse1, parse2);
+                    // var _newVertex = new Vector3(
+                    //     float.Parse(iterator[0], ci),
+                    //     float.Parse(iterator[1], NumberStyles.Float),
+                    //     float.Parse(iterator[2], NumberStyles.Float)
+                    //     );
                     
                     mVertices.Add(_newVertex);
-
                 }
 
                 vertices = mVertices.ToArray();

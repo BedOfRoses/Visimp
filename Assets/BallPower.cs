@@ -46,25 +46,56 @@ public class BallPower : MonoBehaviour
   
    [SerializeField] private Vector3 barysentricCoordinateToBall = Vector3.zero;
    [SerializeField] private Vector2 spawnPosition = Vector2.zero;
-
+   [SerializeField] private float timeOfFirstTriangle = 0;
+   [SerializeField] private float radius = 0.015f;
+   
+   
    public void CollisionCorrection()
    {
-       var k = barysentricCoordinateToBall; // baryCoordForBall
-       var center = transform.position;
-       var dVec = k - center;
-       var s = center - currentPosition;
-       var bVec = currentNormal * Vector3.Dot(dVec, k);
-       // transform.position *= barysentricCoordinateToBall.y;
+       
+    // høyden til ballens punkt på trekanten
+    var k = new Vector3(currentPosition.x ,
+        myTrekant.GetSurfaceHeight(new Vector2(currentPosition.x, currentPosition.z)),
+        currentPosition.z);
+
+    var ballemus = k * currentNormal;
+    // if ()
+    
+    // Debug.Log("B vector: "+b.ToString("F4"));
+    
+    var r = k;
+    
+    
+    var center = transform.position;
+   //  var y_AvstandTilPlanet = k-center;
+   //  Debug.Log("avstandtilplanet: "+ y_AvstandTilPlanet.ToString("F2"));
+
+
+
+
+       // Noe som Anders forklarte
+       //var k = barysentricCoordinateToBall; // baryCoordForBall
+       //var center = transform.position;
+       //var dVec = k - center;
+       //var s = center - currentPosition;
+       //var bVec = Vector3.Dot(dVec, currentNormal) * currentNormal;
+
+       //var _k = center + bVec;
+
+       //transform.position = _k;
+
+       //var bVec = currentNormal * Vector3.Dot(dVec, k);
+       //transform.position *= barysentricCoordinateToBall.y;
 
    }
 
    
 
    public void Start()
-   { 
+   {
        var boi = myTrekant.GetSurfaceHeight(new Vector2(spawnPosition.x, spawnPosition.y));
        Debug.Log("Height: " + boi);
-       var newSpawnpos = new Vector3(spawnPosition.x, boi, spawnPosition.y);
+       var newSpawnpos = new Vector3(spawnPosition.x, boi+radius, spawnPosition.y);
        currentPosition = newSpawnpos;
        transform.position = currentPosition;
        previousPosition = currentPosition;
@@ -77,7 +108,7 @@ public class BallPower : MonoBehaviour
         
         
         move();
-        //CollisionCorrection();
+        CollisionCorrection();
 
         deltaPosition = currentPosition - previousPosition;
 
@@ -114,6 +145,9 @@ public class BallPower : MonoBehaviour
             
             if (barysentricCoordinateToBall is{x:>= 0, y:>= 0, z:>= 0})
             {
+                
+                timeOfFirstTriangle += Time.fixedDeltaTime;
+                
                 // Normalvektor i planet N = (_v1 - _v0) crossproduct (_v2 - _v0)
                  currentNormal  = Vector3.Cross((v1 - v0), (v2 - v0)).normalized; //WORKED HERE
                

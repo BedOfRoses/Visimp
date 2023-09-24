@@ -458,6 +458,8 @@ MonoBehaviour:
   mesh: {fileID: 0}
   vertices: []
   triangles: 
+  verticesPathName: vertices.txt
+  trianglesPathName: triangles.txt
 --- !u!23 &637265905
 MeshRenderer:
   m_ObjectHideFlags: 0
