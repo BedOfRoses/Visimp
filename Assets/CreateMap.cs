@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using UnityEngine;
@@ -16,15 +17,39 @@ public class CreateMap : MonoBehaviour
     public Vector3[] vertices;
     public int[] triangles;
 
+    [SerializeField] private Vector3[] m_Vertices = default;
+    [SerializeField] private int[] m_Triangles = default;
+
+    [SerializeField] private string verticesPathName;
+    [SerializeField] private string trianglesPathName;
+    
     private void Awake()
     {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
-        CreateShape();
-        UpdateMesh();
+        
+        CreateNewShape();
+        UpdateNewMesh();
+        //CreateShape();
+        //UpdateMesh();
+        
         MeshCollider meshji = gameObject.AddComponent(typeof(MeshCollider)) as MeshCollider;
         meshji.material.dynamicFriction = dynFrick;
         meshji.material.staticFriction = statFrick;
+    }
+
+
+    private void UpdateNewMesh()
+    {
+        mesh.Clear();
+        mesh.vertices = m_Vertices;
+        mesh.triangles = m_Triangles;
+    }
+
+    private void CreateNewShape()
+    {
+        ReadVerticesData(verticesPathName);
+        ReadTriangleData(trianglesPathName);
     }
     
     void CreateShape()
@@ -137,6 +162,7 @@ public class CreateMap : MonoBehaviour
     private void ReadVerticesData(string nameOfFile)
     {
 
+        
         string filepath = Path.Combine(Application.streamingAssetsPath, nameOfFile);
 
 
@@ -146,6 +172,15 @@ public class CreateMap : MonoBehaviour
         {
             
             var tempText = File.ReadAllLines(filepath);
+
+            foreach (var VARIABLE in tempText)
+            {
+                Debug.Log(VARIABLE);
+
+            }
+
+            CultureInfo cult = new CultureInfo(3);
+            
             
             if (tempText.Length > 0)
             {
@@ -165,8 +200,6 @@ public class CreateMap : MonoBehaviour
                         float.Parse(iterator[2]));
                     
                     mVertices.Add(_newVertex);
-                    
-
 
                 }
 
@@ -186,12 +219,41 @@ public class CreateMap : MonoBehaviour
         
 
     }
-
-
-
+    
     private void ReadTriangleData(string nameOfFile)
     {
+        string filepath = Path.Combine(Application.streamingAssetsPath, nameOfFile);
         
+        List<int> Triangles = new List<int>();
+        
+        if (File.Exists(filepath))
+        {
+            var tempText = File.ReadAllLines(filepath);
+            
+            if (tempText.Length > 0)
+            {
+                int howManyTriangles = int.Parse(tempText[0]); // 4
+                
+                Triangles.Capacity = howManyTriangles * 3;
+
+                for (var i = 1; i <= howManyTriangles; i++)
+                {
+                    var iterator = tempText[i].Split(' '); // splitter opp mellom mellomrommet
+                    
+                    Triangles.Add(int.Parse(iterator[0]));
+                    Triangles.Add(int.Parse(iterator[1]));
+                    Triangles.Add(int.Parse(iterator[2]));
+                }
+                triangles = Triangles.ToArray();
+            }
+        }
+        
+        else
+        {
+            Debug.Log("Fant ikke fil");
+        }
+
+
     }
     
     
