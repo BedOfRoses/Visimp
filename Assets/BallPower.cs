@@ -48,25 +48,28 @@ public class BallPower : MonoBehaviour
    [SerializeField] private Vector2 spawnPosition = Vector2.zero;
    [SerializeField] private float timeOfFirstTriangle = 0;
    [SerializeField] private float radius = 0.015f;
+   [SerializeField] private Vector3 spawnPos3 = Vector3.zero;
+   
    
    
    public void CollisionCorrection()
    {
+       // I had some difficulities in getting this to work
        
-    // høyden til ballens punkt på trekanten
-    var k = new Vector3(currentPosition.x ,
-        myTrekant.GetSurfaceHeight(new Vector2(currentPosition.x, currentPosition.z)),
-        currentPosition.z);
+       // Some help from Haldor in this function
+       
+    // høyden til ballens punkt på trekanten. I tillegg så er ballen gjennom på dette tidspunktet
+    var k = new Vector3(currentPosition.x ,myTrekant.GetSurfaceHeight(new Vector2(currentPosition.x, currentPosition.z)), currentPosition.z);
 
-    var ballemus = k * currentNormal;
-    // if ()
-    
-    // Debug.Log("B vector: "+b.ToString("F4"));
-    
-    var r = k;
-    
-    
-    var center = transform.position;
+    // Denne ligningen gir at vi løfter opp ballen ifht nåværende normal i trekantplanet
+
+    // Hvis ballen sin y-verdi er under kontaktplanets
+    if (!(currentPosition.y < k.y)) return;
+    var _newPositionAfterCollition = k + radius * currentNormal;
+    transform.position = _newPositionAfterCollition;
+
+
+    // var center = transform.position;
    //  var y_AvstandTilPlanet = k-center;
    //  Debug.Log("avstandtilplanet: "+ y_AvstandTilPlanet.ToString("F2"));
 
@@ -99,6 +102,7 @@ public class BallPower : MonoBehaviour
        currentPosition = newSpawnpos;
        transform.position = currentPosition;
        previousPosition = currentPosition;
+       spawnPos3 = currentPosition;
    }
 
   
@@ -149,7 +153,7 @@ public class BallPower : MonoBehaviour
                 timeOfFirstTriangle += Time.fixedDeltaTime;
                 
                 // Normalvektor i planet N = (_v1 - _v0) crossproduct (_v2 - _v0)
-                 currentNormal  = Vector3.Cross((v1 - v0), (v2 - v0)).normalized; //WORKED HERE
+                 currentNormal  = Vector3.Cross((v1 - v0), (v2 - v0)).normalized; 
                
                 
                 // beregn akselasjonsvektor - ligning (8.12)
@@ -157,6 +161,11 @@ public class BallPower : MonoBehaviour
                     (currentNormal.x * currentNormal.y),
                     (currentNormal.y * currentNormal.y) - 1f,
                     (currentNormal.z * currentNormal.y) ) * -Physics.gravity.y;
+                
+                Debug.Log("accelboi" + accelerationVector.magnitude);
+                Debug.Log("Velocciittyy" + currentVelocity.magnitude);
+                Debug.Log("DistanceTraveled" + (spawnPos3 - currentPosition).magnitude);
+                
                 
                 // Oppdaterer hastighet ligning ( 8 . 1 4 )
                 // Update Velocity ( Vk+1 = Vk + a*deltatime )
