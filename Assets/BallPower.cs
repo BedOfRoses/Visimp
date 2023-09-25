@@ -232,13 +232,7 @@ public class BallPower : MonoBehaviour
 
         Gizmos.color = Color.blue;
         Gizmos.DrawRay(position, collitionNormal);
-
-
-        // Gizmos.color = Color.blue;
-        // Gizmos.DrawRay(position, accelerationVector);
-
-        // Gizmos.draw
-
+        
     }
 
 
@@ -276,11 +270,6 @@ public class BallPower : MonoBehaviour
     
     
 }
-
-
-// Debug.Log("x: "+ ballBarysentrisk.x.ToString() + "y: "+ ballBarysentrisk.y.ToString() + "z:"+ ballBarysentrisk.z.ToString());
-
-
 
 
 
