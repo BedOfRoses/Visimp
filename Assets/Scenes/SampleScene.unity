@@ -598,6 +598,9 @@ MonoBehaviour:
   vertex2: {x: 0, y: 0, z: 0}
   barysentricCoordinateToBall: {x: 0, y: 0, z: 0}
   spawnPosition: {x: 0.06, y: 0.03}
+  timeOfFirstTriangle: 0
+  radius: 0.015
+  spawnPos3: {x: 0, y: 0, z: 0}
 --- !u!23 &812888970
 MeshRenderer:
   m_ObjectHideFlags: 0
