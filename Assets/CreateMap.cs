@@ -29,12 +29,12 @@ public class CreateMap : MonoBehaviour
         GetComponent<MeshFilter>().mesh = mesh;
         
         //With readfile functionality
-        CreateNewShape();
-        UpdateNewMesh();
+       CreateNewShape();
+       UpdateNewMesh();
         
         //Without readfile functionality
-        // CreateShape();
-        // UpdateMesh();
+         // CreateShape();
+         // UpdateMesh();
         
         MeshCollider meshji = gameObject.AddComponent(typeof(MeshCollider)) as MeshCollider;
         meshji.material.dynamicFriction = dynFrick;
