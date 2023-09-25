@@ -123,7 +123,7 @@ public class BallPower : MonoBehaviour
         // myTrekant.mesh.triangles.Length = 12
         for (int i = 0; i < myTrekant.mesh.triangles.Length;  i+=3 )
         {
-            current_Index = i / 3;
+            current_Index = i / 3; //Deler på tre siden vi itererer med i+=3
             Vector3 v0, v1, v2; 
             // Iterate through the vertex data
             int index_0 = myTrekant.mesh.triangles[i];
@@ -162,9 +162,9 @@ public class BallPower : MonoBehaviour
                     (currentNormal.y * currentNormal.y) - 1f,
                     (currentNormal.z * currentNormal.y) ) * -Physics.gravity.y;
                 
-                Debug.Log("accelboi" + accelerationVector.magnitude);
-                Debug.Log("Velocciittyy" + currentVelocity.magnitude);
-                Debug.Log("DistanceTraveled" + (spawnPos3 - currentPosition).magnitude);
+               // Debug.Log("accelboi" + accelerationVector.magnitude);
+               // Debug.Log("Velocciittyy" + currentVelocity.magnitude);
+               // Debug.Log("DistanceTraveled" + (spawnPos3 - currentPosition).magnitude);
                 
                 
                 // Oppdaterer hastighet ligning ( 8 . 1 4 )

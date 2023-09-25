@@ -16,10 +16,7 @@ public class CreateMap : MonoBehaviour
     public Mesh mesh;
     public Vector3[] vertices;
     public int[] triangles;
-
-    // [SerializeField] private Vector3[] m_Vertices = default;
-    // [SerializeField] private int[] m_Triangles = default;
-
+    
     [SerializeField] private string verticesPathName;
     [SerializeField] private string trianglesPathName;
     
@@ -164,11 +161,9 @@ public class CreateMap : MonoBehaviour
 
     private void ReadVerticesData(string nameOfFile)
     {
-
         
         string filepath = Path.Combine(Application.streamingAssetsPath, nameOfFile);
-
-
+        
         List<Vector3> mVertices = new List<Vector3>();
         
         if (File.Exists(filepath))
@@ -182,7 +177,6 @@ public class CreateMap : MonoBehaviour
            // }
 
             CultureInfo cult = new CultureInfo(3); // tror ikke denne blir brukt
-            
             
             if (tempText.Length > 0)
             {
@@ -217,10 +211,7 @@ public class CreateMap : MonoBehaviour
                 vertices = mVertices.ToArray();
 
             }
-
             
-
-
         }
         
         else
