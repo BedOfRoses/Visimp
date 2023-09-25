@@ -190,6 +190,8 @@ public class BallPower : MonoBehaviour
                     
                     //velocityCorrection = previousVelocity -
                     //                     2 * Vector3.Dot(previousVelocity, collitionNormal) * collitionNormal;
+                    
+                    // Collision ball to wall -  ligning (8.16)
                     velocityCorrection = previousVelocity -
                                          2 * Vector3.Project(previousVelocity, collitionNormal); 
                     
@@ -278,25 +280,6 @@ public class BallPower : MonoBehaviour
 
 // Debug.Log("x: "+ ballBarysentrisk.x.ToString() + "y: "+ ballBarysentrisk.y.ToString() + "z:"+ ballBarysentrisk.z.ToString());
 
-
-
-// private void Update()
-// {
-    // Thomas DS kode
-    //  Vector2 position = new Vector2(transform.position.x, transform.position.y);
-    //  
-    //  //calculates the object's movement direction and speed between frames
-    //  Vector2 speed = position - previousPosition;
-    //  
-    //  //used to determine the rotation axis for an object based on its movement direction.
-    //  Vector2 rotationAxis = Vector2.Perpendicular(speed);
-    //  
-    //  //This determines the axis around which the object will rotate. rotating in the opposite direction of its movement
-    //  transform.Rotate(new Vector3(rotationAxis.x, rotationAxis.y,0),-speed.magnitude * 35, Space.World);
-    //  
-    //  //line updates the previousPosition variable to match the current position. This is important for calculating the speed in the next frame.
-    //  previousPosition = position;
-// }
 
 
 
