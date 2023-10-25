@@ -51,8 +51,10 @@ public class ReadMeshFile : MonoBehaviour
             {
                 
                 int howManyVertices = int.Parse(tempText[0]);
+                Debug.Log("Howmanyvertices: " + howManyVertices);
             
                 mVertices.Capacity = howManyVertices;
+                Debug.Log("mVertices.Capacity" + mVertices.Capacity);
                 
                 CultureInfo cultureInfo = new CultureInfo("en-US");
 
@@ -66,7 +68,7 @@ public class ReadMeshFile : MonoBehaviour
                 List<float> tempY= new List<float>();
                 List<float> tempZ= new List<float>();
                 
-                //TODO en eller annen rar ting som gjør at jeg går out of bounds her... :tenker-emoji:
+                //TODO en eller annen rar ting som gjør at jeg går out of bounds her... :tenker-emoji:. KAN VÆRE TALLET ØVERST I FILA
                 for (var i = 1; i <= howManyVertices; i += skipAmount)
                 {
                     var iterator = tempText[i].Split(' ');  //TODO spesifikt denne linja
