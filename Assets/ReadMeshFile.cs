@@ -66,9 +66,10 @@ public class ReadMeshFile : MonoBehaviour
                 List<float> tempY= new List<float>();
                 List<float> tempZ= new List<float>();
                 
+                //TODO en eller annen rar ting som gjør at jeg går out of bounds her... :tenker-emoji:
                 for (var i = 1; i <= howManyVertices; i += skipAmount)
                 {
-                    var iterator = tempText[i].Split(' '); 
+                    var iterator = tempText[i].Split(' ');  //TODO spesifikt denne linja
                     
                     float parse0 = float.Parse(iterator[0], cultureInfo); //x
                     float parse1 = float.Parse(iterator[1], cultureInfo); //y
