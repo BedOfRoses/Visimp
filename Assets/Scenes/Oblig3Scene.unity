@@ -153,7 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vertices: []
-  StinkyString: merged
+  StinkyString: merged.txt
   triangles: 
   smallestx: 0
   smallesty: 0
