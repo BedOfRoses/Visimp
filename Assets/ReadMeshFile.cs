@@ -49,14 +49,14 @@ public class ReadMeshFile : MonoBehaviour
             
             if (tempText.Length > 0)
             {
-             
+                
                 int howManyVertices = int.Parse(tempText[0]);
             
                 mVertices.Capacity = howManyVertices;
                 
                 CultureInfo cultureInfo = new CultureInfo("en-US");
 
-                const int skipAmount = 15000;
+                const int skipAmount = 100000;
                 
                 ///
                 ///
@@ -66,7 +66,7 @@ public class ReadMeshFile : MonoBehaviour
                 List<float> tempY= new List<float>();
                 List<float> tempZ= new List<float>();
                 
-                for (var i = 1; i <= howManyVertices; i++)
+                for (var i = 1; i <= howManyVertices; i += skipAmount)
                 {
                     var iterator = tempText[i].Split(' '); 
                     
@@ -99,7 +99,7 @@ public class ReadMeshFile : MonoBehaviour
                 
                 
                 
-                for (var i = 1; i <= howManyVertices; i++)
+                for (var i = 1; i <= howManyVertices; i += skipAmount)
                 {
                     var iterator = tempText[i].Split(' '); // splitter opp mellom mellomrommet
                     
