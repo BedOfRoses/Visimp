@@ -18,7 +18,7 @@ public class ReadMeshFile : MonoBehaviour
     
     public void Awake()
     {
-        GetSmallestXYZvalues(StinkyString);
+        //GetSmallestXYZvalues(StinkyString);
         ReadVerticesData(StinkyString);
     }
 
@@ -86,6 +86,10 @@ public class ReadMeshFile : MonoBehaviour
                 smallestx = tempX.Min();
                 smallesty = tempY.Min();
                 smallestz = tempZ.Min();
+
+                tempX = null;
+                tempZ = null;
+                tempY = null;
                 
                 /// 
                 ///
@@ -95,7 +99,7 @@ public class ReadMeshFile : MonoBehaviour
                 
                 
                 
-                for (var i = 1; i <= howManyVertices; i += skipAmount)
+                for (var i = 1; i <= howManyVertices; i++)
                 {
                     var iterator = tempText[i].Split(' '); // splitter opp mellom mellomrommet
                     
