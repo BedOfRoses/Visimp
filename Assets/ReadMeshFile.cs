@@ -32,58 +32,6 @@ public class ReadMeshFile : MonoBehaviour
         }
         
     }
-
-    void GetSmallestXYZvalues(string nameOfFile)
-    {
-        string filepath = Path.Combine(Application.streamingAssetsPath, nameOfFile);
-        
-        List<Vector3> mVertices = new List<Vector3>();
-        
-        if (File.Exists(filepath))
-        {
-            
-            var tempText = File.ReadAllLines(filepath);
-
-            CultureInfo cult = new CultureInfo(3); // tror ikke denne blir brukt
-            
-            if (tempText.Length > 0)
-            {
-                int howManyVertices = int.Parse(tempText[0]);
-                
-                CultureInfo cultureInfo = new CultureInfo("en-US");
-                const int skipAmount = 15000;
-                
-                List<float> tempX = new List<float>();
-                List<float> tempY= new List<float>();
-                List<float> tempZ= new List<float>();
-                
-                for (var i = 1; i <= howManyVertices; i++)
-                {
-                    var iterator = tempText[i].Split(' '); 
-                    
-                    float parse0 = float.Parse(iterator[0], cultureInfo);
-                    float parse1 = float.Parse(iterator[1], cultureInfo);
-                    float parse2 = float.Parse(iterator[2], cultureInfo);
-                    
-                    tempX.Add(parse0);
-                    tempY.Add(parse2);
-                    tempZ.Add(parse1);
-
-                }
-                // Gives us the smallest values for x,y,z so that we can subtract it with the other intervals of vertices data (or point cloud data)
-                smallestx = tempX.Min();
-                smallesty = tempY.Min();
-                smallestz = tempZ.Min();
-                
-            }
-            
-        }
-        
-        else
-        {
-            Debug.Log("Fant ikke fil");
-        }
-    }
     
     private void ReadVerticesData(string nameOfFile)
     {
@@ -111,7 +59,7 @@ public class ReadMeshFile : MonoBehaviour
                 const int skipAmount = 15000;
                 
                 ///
-                /// sorting before iterating new vertices
+                ///
                 ///
                 
                 List<float> tempX = new List<float>();
@@ -120,41 +68,47 @@ public class ReadMeshFile : MonoBehaviour
                 
                 for (var i = 1; i <= howManyVertices; i++)
                 {
-                    var iterator = tempText[i].Split(' '); // splitter opp mellom mellomrommet
+                    var iterator = tempText[i].Split(' '); 
                     
+                    float parse0 = float.Parse(iterator[0], cultureInfo); //x
+                    float parse1 = float.Parse(iterator[1], cultureInfo); //y
+                    float parse2 = float.Parse(iterator[2], cultureInfo); //z
                     
-                    float parse0 = float.Parse(iterator[0], cultureInfo);
-                    float parse1 = float.Parse(iterator[1], cultureInfo);
-                    float parse2 = float.Parse(iterator[2], cultureInfo);
-
-              
-                    tempX.Add(parse0);
-                    tempY.Add(parse2);
-                    tempZ.Add(parse1);
+                    // Y is now Z
+                    
+                    tempX.Add(parse0); //x
+                    tempZ.Add(parse1); //z
+                    tempY.Add(parse2); //y
+                   
 
                 }
-
                 // Gives us the smallest values for x,y,z so that we can subtract it with the other intervals of vertices data (or point cloud data)
                 smallestx = tempX.Min();
                 smallesty = tempY.Min();
                 smallestz = tempZ.Min();
                 
-                ///
+                /// 
                 ///
                 /// 
                 
                 
-                for (var i = 1; i <= howManyVertices; i+=skipAmount)
+                
+                
+                
+                for (var i = 1; i <= howManyVertices; i += skipAmount)
                 {
                     var iterator = tempText[i].Split(' '); // splitter opp mellom mellomrommet
-                    
                     
                     float parse0 = float.Parse(iterator[0], cultureInfo);
                     float parse1 = float.Parse(iterator[1], cultureInfo);
                     float parse2 = float.Parse(iterator[2], cultureInfo);
 
+                    var otherX = parse0 - smallestx;
+                    var otherZ = parse1 - smallestz;
+                    var otherY = parse2 - smallesty;
+                    
                     //Change spot of y and z
-                    var _newVertex = new Vector3(parse0 - smallestx, parse2 - smallesty, parse1 - smallestz);
+                    var _newVertex = new Vector3(otherX, otherY, otherZ);
                     
                     mVertices.Add(_newVertex);
                 }
