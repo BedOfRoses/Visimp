@@ -123,6 +123,71 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &137354569
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 137354572}
+  - component: {fileID: 137354571}
+  - component: {fileID: 137354570}
+  m_Layer: 0
+  m_Name: Delaunay
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &137354570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 137354569}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f1b2519b59aa894594c785afebd0d24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  vertices: []
+  triangles: 
+  zmin: 0
+  zmax: 0
+  xmin: 0
+  xmax: 0
+  NE: {x: 0, y: 0, z: 0}
+  NW: {x: 0, y: 0, z: 0}
+  SW: {x: 0, y: 0, z: 0}
+  SE: {x: 0, y: 0, z: 0}
+  points: []
+  nameee: 
+--- !u!33 &137354571
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 137354569}
+  m_Mesh: {fileID: 0}
+--- !u!4 &137354572
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 137354569}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1217.0507, y: 544.3486, z: 1376.1912}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &915064245
 GameObject:
   m_ObjectHideFlags: 0
@@ -237,7 +302,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1643832829}
-  - component: {fileID: 1643832828}
   m_Layer: 0
   m_Name: TerrainObject
   m_TagString: Untagged
@@ -245,24 +309,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1643832828
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1643832827}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 850d7da0a5f96e84ca7c43f282c1f0f1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  vertices: []
-  StinkyString: merged.txt
-  triangles: 
-  smallestx: 0
-  smallesty: 0
-  smallestz: 0
 --- !u!4 &1643832829
 Transform:
   m_ObjectHideFlags: 0
@@ -541,3 +587,4 @@ SceneRoots:
   - {fileID: 1837057397}
   - {fileID: 1643832829}
   - {fileID: 915064249}
+  - {fileID: 137354572}
