@@ -16,19 +16,21 @@ public class ReadMeshFile : MonoBehaviour
     [SerializeField] private float smallesty;
     [SerializeField] private float smallestz;
     
+    public const int skipAmount = 1000;
+
+    
     public void Awake()
     {
-        //GetSmallestXYZvalues(StinkyString);
         ReadVerticesData(StinkyString);
     }
 
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.black;
-
+    
         for (int i = 0; i < vertices.Length; i++)
         {
-            Gizmos.DrawSphere(vertices[i],0.1f);
+            Gizmos.DrawSphere(vertices[i],10f);
         }
         
     }
@@ -58,7 +60,6 @@ public class ReadMeshFile : MonoBehaviour
                 
                 CultureInfo cultureInfo = new CultureInfo("en-US");
 
-                const int skipAmount = 100000;
                 
                 ///
                 ///
