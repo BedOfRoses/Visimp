@@ -33,11 +33,7 @@ public class Delaunay : MonoBehaviour
         public Vector3 point;
     }
     private float ResolutionQuad = 100;
-
-    public T GetDefaultValue<T>()
-    {
-        return default(T);
-    }
+    
 
     #region MyRegion
 
@@ -308,16 +304,14 @@ public class Delaunay : MonoBehaviour
                     tempZ.Add(parse1); //z
                     tempY.Add(parse2); //y
                 }
-                // Gives us the smallest values for x,y,z so that we can subtract it with the other intervals of vertices data (or point cloud data)
+                
                 smallestx = tempX.Min();
                 smallesty = tempY.Min();
                 smallestz = tempZ.Min();
-
                 largestx = tempX.Max();
                 largesty = tempY.Max();
                 largestz = tempZ.Max();
                 
-
                 tempX = null;
                 tempZ = null;
                 tempY = null;
