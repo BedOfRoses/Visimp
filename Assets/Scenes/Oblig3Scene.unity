@@ -155,6 +155,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   vertices: []
   triangles: 
+  smallestx: 0
+  smallesty: 0
+  smallestz: 0
+  largestx: 0
+  largesty: 0
+  largestz: 0
   zmin: 0
   zmax: 0
   xmin: 0
@@ -302,13 +308,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1643832829}
+  - component: {fileID: 1643832830}
   m_Layer: 0
   m_Name: TerrainObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1643832829
 Transform:
   m_ObjectHideFlags: 0
@@ -324,6 +331,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1643832830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1643832827}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 850d7da0a5f96e84ca7c43f282c1f0f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  vertices: []
+  StinkyString: merged.txt
+  triangles: 
+  smallestx: 0
+  smallesty: 0
+  smallestz: 0
 --- !u!1 &1837057395
 GameObject:
   m_ObjectHideFlags: 0
