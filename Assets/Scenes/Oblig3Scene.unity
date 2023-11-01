@@ -164,7 +164,7 @@ MonoBehaviour:
   SW: {x: 0, y: 0, z: 0}
   SE: {x: 0, y: 0, z: 0}
   points: []
-  nameee: 
+  nameee: merged.txt
 --- !u!33 &137354571
 MeshFilter:
   m_ObjectHideFlags: 0
