@@ -42,6 +42,14 @@ public class Delaunay : MonoBehaviour
     #region MyRegion
 
     
+    [SerializeField] private float smallestx;
+    [SerializeField] private float smallesty;
+    [SerializeField] private float smallestz;
+    
+    [SerializeField] private float largestx;
+    [SerializeField] private float largesty;
+    [SerializeField] private float largestz;
+    
 
     [SerializeField] private float zmin = 0;
     [SerializeField] private float zmax = 0;
@@ -58,7 +66,7 @@ public class Delaunay : MonoBehaviour
     #endregion
 
 
-    public const int skipAmount = 10000000;
+    public const int skipAmount = 1000000;
     public string nameee;
 
 
@@ -67,7 +75,7 @@ public class Delaunay : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
-        CreateMesh();
+        //CreateMesh();
         UpdateMesh();
     }
 
@@ -83,6 +91,9 @@ public class Delaunay : MonoBehaviour
             for (int x = (int)xmin; x <= xmax; x++)
             {
 
+                // quad surf = new quad();
+                // surf.NE     
+                
                 //float y = GetSurfaceHeight(new Vector2(x,z));
                  _vertices.Add(new Vector3(x,0,z));
                 i++;
@@ -133,7 +144,8 @@ public class Delaunay : MonoBehaviour
 
         foreach (var vertx in vertices)
         {
-            Gizmos.DrawCube(vertx, Vector3.one * 2f);
+            Gizmos.color = Color.green;
+            Gizmos.DrawCube(vertx, Vector3.one * 3f);
         }
     
     }
@@ -262,70 +274,85 @@ public class Delaunay : MonoBehaviour
 
     
     
-    void ReadData(string nameOfFile)
+    private void ReadData(string nameOfFile)
     {
+        
         string filepath = Path.Combine(Application.streamingAssetsPath, nameOfFile);
-       
+        
+        List<Vector3> mVertices = new List<Vector3>();
         
         if (File.Exists(filepath))
         {
+            
             var tempText = File.ReadAllLines(filepath);
+
+           
+            
             if (tempText.Length > 0)
             {
-                int howManyPoints = int.Parse(tempText[0]);
-                points.Capacity = howManyPoints;
-
+                int howManyVertices = int.Parse(tempText[0]);
+                mVertices.Capacity = howManyVertices;
                 List<float> tempX = new List<float>();
-                List<float> tempY = new List<float>();
-                // List<float> tempZ = new List<float>();
-
-                for (var i = 1; i <= howManyPoints; i += skipAmount)
+                List<float> tempY= new List<float>();
+                List<float> tempZ= new List<float>();
+                
+                for (var i = 1; i <= howManyVertices; i += skipAmount)
                 {
-                    var iterator = tempText[i].Split(' ');
-
-                    // both for saving all points in a container and also finding xmin,ymax and that stuff
+                    var iterator = tempText[i].Split(' '); 
+                    
                     float parse0 = float.Parse(iterator[0], cultureInfo); //x
                     float parse1 = float.Parse(iterator[1], cultureInfo); //y
                     float parse2 = float.Parse(iterator[2], cultureInfo); //z
-
-
-                    var newPoint = new Vector3(
-                        parse0,  //x
-                        parse2,  //z
-                        parse1); //y
-                    points.Add(newPoint);
-                    
                     // Y is now Z
-
                     tempX.Add(parse0); //x
-                    // tempZ.Add(parse1); //y
-                    tempY.Add(parse2); //z
-
-
+                    tempZ.Add(parse1); //z
+                    tempY.Add(parse2); //y
                 }
+                // Gives us the smallest values for x,y,z so that we can subtract it with the other intervals of vertices data (or point cloud data)
+                smallestx = tempX.Min();
+                smallesty = tempY.Min();
+                smallestz = tempZ.Min();
+
+                largestx = tempX.Max();
+                largesty = tempY.Max();
+                largestz = tempZ.Max();
                 
-                // Bestem xmin,xmax,ymin,ymax
-                // Mainly for storing them somewhere
-                xmin = tempX.Min();
-                zmin = tempY.Min();
-                zmax = tempY.Max();
-                xmax = tempX.Max();
 
                 tempX = null;
-                // tempZ = null;
+                tempZ = null;
                 tempY = null;
+                
+              
+                for (var i = 1; i <= howManyVertices; i += skipAmount)
+                {
+                    var iterator = tempText[i].Split(' '); // splitter opp mellom mellomrommet
+                    
+                    float parse0 = float.Parse(iterator[0], cultureInfo);
+                    float parse1 = float.Parse(iterator[1], cultureInfo);
+                    float parse2 = float.Parse(iterator[2], cultureInfo);
 
-               
-                
-                
-                
+                    var otherX = parse0 - smallestx;
+                    var otherZ = parse1 - smallestz;
+                    var otherY = parse2 - smallesty;
+                    
+                    //Change spot of y and z
+                    var _newVertex = new Vector3(otherX, otherY, otherZ);
+                    
+                    mVertices.Add(_newVertex);
+                }
+
+                vertices = mVertices.ToArray();
+
             }
-
             
-            
-            
-
         }
+        
+        else
+        {
+            Debug.Log("Fant ikke fil");
+        }
+        
+
     }
     
     
