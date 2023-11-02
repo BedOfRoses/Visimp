@@ -32,24 +32,33 @@ public class Delaunay : MonoBehaviour
         public float SW; //SW
         public Vector3 point;
     }
-    private float ResolutionQuad = 100;
+    private int ResolutionQuad = 100;
     
 
     #region MyRegion
 
     
-    [SerializeField] private float smallestx;
-    [SerializeField] private float smallesty;
-    [SerializeField] private float smallestz;
+    // These values are before we change the minimum and maximum sizes          // maybe dont need to overwrite them    
+    // [SerializeField] private float BeforeConversionsmallestx = default;      // maybe dont need to overwrite them
+    // [SerializeField] private float BeforeConversionsmallesty = default;      // maybe dont need to overwrite them
+    // [SerializeField] private float BeforeConversionsmallestz = default;      // maybe dont need to overwrite them
+    // [SerializeField] private float BeforeConversionlargestx = default;       // maybe dont need to overwrite them
+    // [SerializeField] private float BeforeConversionlargesty = default;       // maybe dont need to overwrite them
+    // [SerializeField] private float BeforeConversionlargestz = default;       // maybe dont need to overwrite them
     
-    [SerializeField] private float largestx;
-    [SerializeField] private float largesty;
-    [SerializeField] private float largestz;
+    // These are the ones used for xmin and xmax values
+    [SerializeField] private float smallestx = default;
+    [SerializeField] private float smallesty = default;
+    [SerializeField] private float smallestz = default;
+ 
+    [SerializeField] private float largestx = default;
+    [SerializeField] private float largesty = default;
+    [SerializeField] private float largestz = default;
     
 
     [SerializeField] private float zmin = 0;
-    [SerializeField] private float zmax = 0;
     [SerializeField] private float xmin = 0;
+    [SerializeField] private float zmax = 0;
     [SerializeField] private float xmax = 0;
 
     
@@ -61,10 +70,18 @@ public class Delaunay : MonoBehaviour
     [SerializeField] private List<Vector3> points = new List<Vector3>();
     #endregion
 
-
-    public const int skipAmount = 1000000;
+    /*Self-note: if const, then [SerializeField] won't work */
+    [SerializeField] public int skipAmount = 100000;
     public string nameee;
 
+    #region Data Storage of Point Sky
+    
+    /*Sole purpose of this list is the keep track of all our points from our pointsky data file set */
+    private List<Vector3> mPointSky = new List<Vector3>(); 
+    
+
+    #endregion
+    
 
     private void Start()
     {
@@ -82,21 +99,43 @@ public class Delaunay : MonoBehaviour
         // New points that we will create mesh of.
         var _vertices = new List<Vector3>();//[(int) ((xmax + 1) * (zmax + 1))];
 
-        for (int i = 0, z = (int)zmin; i <= zmax; i++)
+        for (int i = 0, z = (int)zmin; i <= zmax; i+=ResolutionQuad)
         {
-            for (int x = (int)xmin; x <= xmax; x++)
+            for (int x = (int)xmin; x <= xmax; x+=ResolutionQuad)
             {
 
+                // Loop through our points
+                foreach (var vtx in mPointSky)
+                {
+                    // our point is within the square size
+                    if (vtx.x <= x && vtx.z <= z)
+                    {
+                        //TODO: Work with implementation of points into a new plane. Check 
+                        // This is inheriently the correct implemenatation.
+                        // Because now we iterate/move along an "axis" where all these existing points are
+                        quad flate = new quad();
+                        flate.NW = z;
+                        flate.NE = z + ResolutionQuad;
+                        flate.SW = x;
+                        flate.SE = x + ResolutionQuad;
+                        var averageHeight = vtx.y;
+
+                    }
+                    
+                }
                 // quad surf = new quad();
                 // surf.NE     
                 
                 //float y = GetSurfaceHeight(new Vector2(x,z));
-                 _vertices.Add(new Vector3(x,0,z));
+                
+                //TODO: MAYBE NOT ADD THESE TO A VERTICES OF ANY SORT
+                _vertices.Add(new Vector3(x,0,z));
                 i++;
             }
             
         }
 
+        // THIS "vertices" IS SUPPOSED TO BE THE "PLANE"
         vertices = _vertices.ToArray();
 
         
@@ -141,7 +180,7 @@ public class Delaunay : MonoBehaviour
         foreach (var vertx in vertices)
         {
             Gizmos.color = Color.green;
-            Gizmos.DrawCube(vertx, Vector3.one * 3f);
+            Gizmos.DrawCube(vertx, Vector3.one * 60f);
         }
     
     }
@@ -157,7 +196,12 @@ public class Delaunay : MonoBehaviour
     
     private void Awake()
     {
+        /*Firstly just read the data and give the information to different variables, like mPointSky etc*/
         ReadData(nameee);
+        
+        /*Secondly, set the xmin,xmax,zmin and zmax*/
+        SetExtremetiesValue();
+        
     }
     #endregion
 
@@ -202,6 +246,11 @@ public class Delaunay : MonoBehaviour
     }
 
 
+    #region Height functions
+
+    
+
+   
     public float GetSurfaceHeight(Vector2 point)
     {
         // source https://github.com/haldorj/3Dprog22/blob/main/triangulation.cpp
@@ -236,8 +285,6 @@ public class Delaunay : MonoBehaviour
 
         return 0f;
     }
-    
-    
     private static Vector3 BarycentricFunc(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 pt)
     {
         Vector2 p12 = p2 - p1;
@@ -267,43 +314,97 @@ public class Delaunay : MonoBehaviour
         // Debug.Log("Baryc"+ baryc.ToString("F2"));
         return baryc;
     }
+    #endregion
 
-    
+
+    void SetExtremetiesValue()
+    {
+
+        ///
+        /// ONLY FINDING FOR X AND Z
+        /// ALSO
+        /// THIS IS AFTER DATA CONVERSION WHERE Y AND Z HAS CHANGED POSITIONS
+        ///
+        
+        var tempX = new List<float>();
+        var tempZ = new List<float>();
+        
+        foreach (var vtx in mPointSky)
+        {
+            tempX.Add(vtx.x);
+            tempZ.Add(vtx.z);
+        }
+
+        xmax = tempX.Max();
+        xmin = tempX.Min();
+        zmax = tempZ.Max();
+        zmin = tempZ.Min();
+
+        // Clear temporaries
+        tempZ.Clear();
+        tempX.Clear();
+
+    }
     
     private void ReadData(string nameOfFile)
     {
         
         string filepath = Path.Combine(Application.streamingAssetsPath, nameOfFile);
         
-        List<Vector3> mVertices = new List<Vector3>();
+        // List<Vector3> mPointSky = new List<Vector3>();
         
         if (File.Exists(filepath))
         {
             
             var tempText = File.ReadAllLines(filepath);
-
-           
             
             if (tempText.Length > 0)
             {
-                int howManyVertices = int.Parse(tempText[0]);
-                mVertices.Capacity = howManyVertices;
+                // Get the total amount of points
+                int HowManyPoints = int.Parse(tempText[0]);
+                
+                // Set the capacity of PointSky 
+                mPointSky.Capacity = HowManyPoints;
+                
+                // Temporary storage of all float values from respective X,Y,Z
+                // That will be used to find extreme values
                 List<float> tempX = new List<float>();
                 List<float> tempY= new List<float>();
                 List<float> tempZ= new List<float>();
                 
-                for (var i = 1; i <= howManyVertices; i += skipAmount)
+                // Iterate to add in respective temporary storage.
+                for (var i = 1; i <= HowManyPoints; i += skipAmount)
                 {
                     var iterator = tempText[i].Split(' '); 
                     
                     float parse0 = float.Parse(iterator[0], cultureInfo); //x
                     float parse1 = float.Parse(iterator[1], cultureInfo); //y
                     float parse2 = float.Parse(iterator[2], cultureInfo); //z
-                    // Y is now Z
-                    tempX.Add(parse0); //x
-                    tempZ.Add(parse1); //z
-                    tempY.Add(parse2); //y
+                    ///
+                    ///
+                    /// Y is now Z !!!!!!!!!!!!!!!!!!!!!
+                    ///
+                    /// 
+                    tempX.Add(parse0);
+                    tempY.Add(parse2);
+                    tempZ.Add(parse1);
+                
+                    
                 }
+                
+                
+                ////////////////////////////////////////////////////////////////////////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////////////////////////////////
+                ///
+                ///     IMPORTANT FOR SMALLEST VALUES (float values)
+                ///     Y AND Z HAS NOW CHANGED PLACES, WHICH MEANS:
+                ///     X(use), Y(height), Z(use)
+                ///     
+                /// 
+                ////////////////////////////////////////////////////////////////////////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////////////////////////////////
                 
                 smallestx = tempX.Min();
                 smallesty = tempY.Min();
@@ -312,30 +413,39 @@ public class Delaunay : MonoBehaviour
                 largesty = tempY.Max();
                 largestz = tempZ.Max();
                 
-                tempX = null;
-                tempZ = null;
-                tempY = null;
+                tempX.Clear();
+                tempY.Clear();
+                tempZ.Clear();
+                //tempX = null;
+                //tempY = null;
+                //tempZ = null;
                 
               
-                for (var i = 1; i <= howManyVertices; i += skipAmount)
+              
+                // Now we read in again, but this time we add these points and also
+                // subtract their smallest value from each point.
+                // that way we keep the respective relation between all the points
+                for (var i = 1; i <= HowManyPoints; i += skipAmount)
                 {
                     var iterator = tempText[i].Split(' '); // splitter opp mellom mellomrommet
                     
-                    float parse0 = float.Parse(iterator[0], cultureInfo);
-                    float parse1 = float.Parse(iterator[1], cultureInfo);
-                    float parse2 = float.Parse(iterator[2], cultureInfo);
-
-                    var otherX = parse0 - smallestx;
-                    var otherZ = parse1 - smallestz;
-                    var otherY = parse2 - smallesty;
+                    float parse0 = float.Parse(iterator[0], cultureInfo); // x but in unity it would be X  
+                    float parse1 = float.Parse(iterator[1], cultureInfo); // y but in unity it would be Z
+                    float parse2 = float.Parse(iterator[2], cultureInfo); // z but in unity it would be Y // SINCE ORIGINAL DATA THIS IS HEIGHT
                     
-                    //Change spot of y and z
+                    // Since y and set has changed in the previous loop 
+                    // We have to subtract the incoming y(parse1) with the smallest z value(in this case 
+                    var otherX = parse0 - smallestx; // x-x
+                    var otherY = parse2 - smallesty; // y-y
+                    var otherZ = parse1 - smallestz; // z-z
+                    
                     var _newVertex = new Vector3(otherX, otherY, otherZ);
                     
-                    mVertices.Add(_newVertex);
+                    mPointSky.Add(_newVertex);
                 }
 
-                vertices = mVertices.ToArray();
+                //TODO: ADD THESE to a temp vertices
+                vertices = mPointSky.ToArray();
 
             }
             
