@@ -77,7 +77,7 @@ public class Delaunay : MonoBehaviour
     #region Data Storage of Point Sky
     
     /*Sole purpose of this list is the keep track of all our points from our pointsky data file set */
-    private List<Vector3> mPointSky = new List<Vector3>(); 
+    [SerializeField] private List<Vector3> mPointSky = new List<Vector3>(); 
     
 
     #endregion
@@ -104,7 +104,20 @@ public class Delaunay : MonoBehaviour
             for (int x = (int)xmin; x <= xmax; x+=ResolutionQuad)
             {
 
-                // Loop through our points
+                // Variables that are going to give us the greatest values within here
+                float avg_height = default;
+                float avg_NW = default;
+                float avg_NE = default;
+                float avg_SW = default;
+                float avg_SE = default;
+                //Create new plane
+                quad flate = new quad();
+
+                // Give them the new List to "clear" themselves
+                List<float> tempX = new List<float>();
+                List<float> tempZ = new List<float>();
+                
+                // Loop through our points that are within the x and z to x+resolution and z+resolution
                 foreach (var vtx in mPointSky)
                 {
                     // our point is within the square size
@@ -113,16 +126,31 @@ public class Delaunay : MonoBehaviour
                         //TODO: Work with implementation of points into a new plane. Check 
                         // This is inheriently the correct implemenatation.
                         // Because now we iterate/move along an "axis" where all these existing points are
-                        quad flate = new quad();
-                        flate.NW = z;
-                        flate.NE = z + ResolutionQuad;
-                        flate.SW = x;
-                        flate.SE = x + ResolutionQuad;
-                        var averageHeight = vtx.y;
-
+                        
+                        
+                        tempX.Add(vtx.x);   // used to get the corners within this respective quad that we are searching
+                        tempZ.Add(vtx.z);   // used to get the corners within this respective quad that we are searching
+                        avg_NW += z;
+                        avg_NE += z + ResolutionQuad;
+                        avg_SW += x;
+                        avg_SE += x + ResolutionQuad;
+                        avg_height += vtx.y;
                     }
-                    
                 }
+                // After calculating average height from looping all points that exists
+                float _xmax = tempX.Max();
+                float _xmin = tempX.Min();
+                float _zmin = tempX.Max();
+                float _zmax = tempX.Min();
+                
+                
+                flate.NW = tempZ.Max() + tempX.Min();
+                flate.NE = tempZ.Max() + tempX.Max();
+                flate.SW = tempZ.Min() + tempX.Min();
+                flate.SE = tempZ.Max() + tempX.Max();
+                
+                
+                
                 // quad surf = new quad();
                 // surf.NE     
                 
