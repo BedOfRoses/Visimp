@@ -32,7 +32,7 @@ public class Delaunay : MonoBehaviour
         public float SW; //SW
         public Vector3 point;
     }
-    private int ResolutionQuad = 100;
+    private int ResolutionQuad = 20;
     
 
     #region MyRegion
@@ -77,8 +77,8 @@ public class Delaunay : MonoBehaviour
     #region Data Storage of Point Sky
     
     /*Sole purpose of this list is the keep track of all our points from our pointsky data file set */
-    [SerializeField] private List<Vector3> mPointSky = new List<Vector3>(); 
-    
+    [SerializeField] private List<Vector3> mPointSky = new List<Vector3>();
+    [SerializeField] private List<Vector3> tempCenter = new List<Vector3>();
 
     #endregion
     
@@ -88,7 +88,8 @@ public class Delaunay : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
-        //CreateMesh();
+        //TODO: CREATE MESH FUNKER IKKE
+        // CreateMesh();
         UpdateMesh();
     }
 
@@ -113,10 +114,12 @@ public class Delaunay : MonoBehaviour
                 //Create new plane
                 quad flate = new quad();
 
+                
                 // Give them the new List to "clear" themselves
                 List<float> tempX = new List<float>();
                 List<float> tempZ = new List<float>();
-                
+                List<Vector3> tempVertex = new List<Vector3>(); // In order to get the average amount of surface area of all
+                int countHowManyWithinArea = 0;
                 // Loop through our points that are within the x and z to x+resolution and z+resolution
                 foreach (var vtx in mPointSky)
                 {
@@ -127,7 +130,7 @@ public class Delaunay : MonoBehaviour
                         // This is inheriently the correct implemenatation.
                         // Because now we iterate/move along an "axis" where all these existing points are
                         
-                        
+                        //Add this vtx that has been 
                         tempX.Add(vtx.x);   // used to get the corners within this respective quad that we are searching
                         tempZ.Add(vtx.z);   // used to get the corners within this respective quad that we are searching
                         avg_NW += z;
@@ -135,22 +138,45 @@ public class Delaunay : MonoBehaviour
                         avg_SW += x;
                         avg_SE += x + ResolutionQuad;
                         avg_height += vtx.y;
+                        
+                        countHowManyWithinArea++;
                     }
                 }
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////
                 // After calculating average height from looping all points that exists
-                float _xmax = tempX.Max();
-                float _xmin = tempX.Min();
-                float _zmin = tempX.Max();
-                float _zmax = tempX.Min();
+                
+                // float _xmax = default;
+                // float _xmin = default;
+                // float _zmin = default;
+                // float _zmax = default;
+                // 
+                // _xmax = tempX.Max();
+                // _xmin = tempX.Min();
+                // _zmin = tempZ.Max();
+                // _zmax = tempZ.Min();
+                // 
+                // 
+                // Debug.Log("xmax"+_xmax+"xmin"+_zmax+"zmin"+_zmin+"zmax"+_zmax);
+
+                // float avgX = (avg_SW + avg_SE) / 2 * countHowManyWithinArea;
+                // float avgY = avg_height / countHowManyWithinArea;
+                // float avgZ = (avg_NW + avg_NE) / 2 * countHowManyWithinArea;
+ 
+                // flate.point = new Vector3(avgX, avgY, avgZ);
+                // 
+                // Debug.Log(flate.point);
+                // tempCenter.Add(flate.point);
+                // 
+                // tempX.Clear();
+                // tempZ.Clear();
+                
+                // flate.NW = _zmax + _zmin;
+                // flate.NE = _zmax + _xmax;
+                // flate.SW = _zmin + _xmin;
+                // flate.SE = _zmin + _xmax;
                 
                 
-                flate.NW = tempZ.Max() + tempX.Min();
-                flate.NE = tempZ.Max() + tempX.Max();
-                flate.SW = tempZ.Min() + tempX.Min();
-                flate.SE = tempZ.Max() + tempX.Max();
-                
-                
-                
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////
                 // quad surf = new quad();
                 // surf.NE     
                 
@@ -210,6 +236,14 @@ public class Delaunay : MonoBehaviour
             Gizmos.color = Color.green;
             Gizmos.DrawCube(vertx, Vector3.one * 60f);
         }
+        
+        
+        
+        // foreach (var vtx in tempCenter)
+        // {
+        //     Gizmos.color = Color.blue;
+        //     Gizmos.DrawCube(vtx,Vector3.one * 60f);
+        // }
     
     }
 
