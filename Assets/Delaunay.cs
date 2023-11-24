@@ -7,6 +7,7 @@ using System.IO;
 using System.Globalization;
 using System.Linq;
 using System.Numerics;
+using Quaternion = UnityEngine.Quaternion;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
@@ -22,8 +23,12 @@ public class Delaunay : MonoBehaviour
     CultureInfo cult = new CultureInfo(3); 
     CultureInfo cultureInfo = new CultureInfo("en-US");
 
+    [SerializeField] private GameObject centerPrefab;
 
+    [SerializeField] private bool bDrawDebugGizmos = true;
     
+    [SerializeField] List<Vector3> bucket = new List<Vector3>();  // Store vtx of points within space
+
     public struct quad
     {
         public float NE; //NE
@@ -32,7 +37,7 @@ public class Delaunay : MonoBehaviour
         public float SW; //SW
         public Vector3 point;
     }
-    private int ResolutionQuad = 20;
+    [SerializeField] private int ResolutionQuad = 20;
     
 
     #region MyRegion
@@ -90,10 +95,76 @@ public class Delaunay : MonoBehaviour
 
         //TODO: CREATE MESH FUNKER IKKE
         // CreateMesh();
+        CreateMesh2();
         UpdateMesh();
     }
 
 
+    void CreateMesh2()
+    {
+
+
+        Vector3 avgPoint = new Vector3(); 
+        float avgHeight = 0;
+        
+        int c = 0;
+        
+        for (int i = 0, z = (int)zmin; i <= zmax; i+=ResolutionQuad)
+        {
+            for (int x = (int)xmin; x <= xmax; x+=ResolutionQuad)
+            {
+                
+                // Reset or Flush the bucket
+                avgHeight = 0;
+                c = 0;
+                // bucket.Clear();
+                avgPoint = new Vector3(); // clear it
+                
+                //Traverse within a space of the x and z axis. Here we will add them into a bucket and create new "center" dots
+                foreach (var vtx in mPointSky)
+                {
+                    // our point is within the square size
+                    if (vtx.x >= x && vtx.z >= z) //TODO: MISSING LOGIC OF THE BOUNDS WE ARE ITERATING. RIGHT NOW WE GET 2000000 OF THE SAME POINTS LOL!
+                    {
+                     // Add to bucket  
+                     bucket.Add(vtx);
+                     avgPoint.x += vtx.x;
+                     avgPoint.z += vtx.z;
+                     avgHeight += avgPoint.y;
+                     c++;
+                    }
+                }
+                
+                // Divide the point by the counter 'c'
+                // All points divided by c
+
+                avgPoint = new Vector3(
+                    avgPoint.x / c,
+                    avgHeight / c, 
+                    avgPoint.z / c);
+                Instantiate(centerPrefab, avgPoint, Quaternion.identity);
+                Debug.Log("C is: " + c + " Avgpoint is: " + avgPoint.ToString() + " AvgHeight: " + avgHeight);
+
+
+            } ///// Going back up / moving further
+            
+        }
+
+        
+        //Instantiate the new center points from the 
+        
+        
+        
+        Debug.Log("Finished looping");
+        
+        
+        
+        // THIS "vertices" IS SUPPOSED TO BE THE "PLANE"
+        // vertices = _vertices.ToArray();
+    }
+
+    
+    
     void CreateMesh()
     {
 
@@ -231,13 +302,22 @@ public class Delaunay : MonoBehaviour
     {
         if (vertices == null) return;
 
-        foreach (var vertx in vertices)
-        {
-            Gizmos.color = Color.green;
-            Gizmos.DrawCube(vertx, Vector3.one * 60f);
-        }
-        
-        
+       // foreach (var vertx in vertices)
+       // {
+       //     Gizmos.color = Color.green;
+       //     Gizmos.DrawCube(vertx, Vector3.one * 60f);
+       // }
+
+       if (bDrawDebugGizmos)
+       {
+           foreach (var vtxx in mPointSky)
+           {
+               Gizmos.color = Color.blue;
+               Gizmos.DrawCube(vtxx, Vector3.one * 50f);
+           } 
+       }
+       
+       
         
         // foreach (var vtx in tempCenter)
         // {
