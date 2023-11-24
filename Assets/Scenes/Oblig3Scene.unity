@@ -159,13 +159,8 @@ MonoBehaviour:
     type: 3}
   bDrawDebugGizmos: 0
   bucket: []
+  Resolution: 50
   ResolutionQuad: 20
-  smallestx: 0
-  smallesty: 0
-  smallestz: 0
-  largestx: 0
-  largesty: 0
-  largestz: 0
   zmin: 0
   xmin: 0
   zmax: 0
@@ -175,7 +170,7 @@ MonoBehaviour:
   SW: {x: 0, y: 0, z: 0}
   SE: {x: 0, y: 0, z: 0}
   points: []
-  skipAmount: 100000
+  skipAmount: 10000
   nameee: merged.txt
   mPointSky: []
   tempCenter: []
