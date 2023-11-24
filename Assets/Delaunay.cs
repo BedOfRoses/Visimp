@@ -108,23 +108,29 @@ public class Delaunay : MonoBehaviour
         float avgHeight = 0;
         
         int c = 0;
+
+
+        float zzzmin=0, zzzmax=0, xxxmax = 0, xxxmin = 0;
+        int pointCounter = 0;
+
         
-        for (int i = 0, z = (int)zmin; i <= zmax; i+=ResolutionQuad)
+        for (int i = 0, z = (int)zmin; i < zmax; i+=ResolutionQuad)
         {
-            for (int x = (int)xmin; x <= xmax; x+=ResolutionQuad)
+            for (int x = (int)xmin; x < xmax; x+=ResolutionQuad)
             {
                 
                 // Reset or Flush the bucket
                 avgHeight = 0;
+                pointCounter = 0;
                 c = 0;
-                // bucket.Clear();
                 avgPoint = new Vector3(); // clear it
+                
                 
                 //Traverse within a space of the x and z axis. Here we will add them into a bucket and create new "center" dots
                 foreach (var vtx in mPointSky)
                 {
                     // our point is within the square size
-                    if (vtx.x >= x && vtx.z >= z) //TODO: MISSING LOGIC OF THE BOUNDS WE ARE ITERATING. RIGHT NOW WE GET 2000000 OF THE SAME POINTS LOL!
+                    if (vtx.x >= x && vtx.x < x+ResolutionQuad &&  vtx.z >= z && vtx.z < z+ResolutionQuad) //TODO: MISSING LOGIC OF THE BOUNDS WE ARE ITERATING. RIGHT NOW WE GET 2000000 OF THE SAME POINTS LOL!
                     {
                      // Add to bucket  
                      bucket.Add(vtx);
@@ -135,15 +141,15 @@ public class Delaunay : MonoBehaviour
                     }
                 }
                 
+                if (pointCounter)
+                
                 // Divide the point by the counter 'c'
                 // All points divided by c
 
-                avgPoint = new Vector3(
-                    avgPoint.x / c,
-                    avgHeight / c, 
-                    avgPoint.z / c);
+               
+                
                 Instantiate(centerPrefab, avgPoint, Quaternion.identity);
-                Debug.Log("C is: " + c + " Avgpoint is: " + avgPoint.ToString() + " AvgHeight: " + avgHeight);
+              
 
 
             } ///// Going back up / moving further
