@@ -29,6 +29,9 @@ public class Delaunay : MonoBehaviour
     
     [SerializeField] List<Vector3> bucket = new List<Vector3>();  // Store vtx of points within space
 
+    [SerializeField] private int Resolution = 50;
+
+    
     public struct quad
     {
         public float NE; //NE
@@ -84,6 +87,9 @@ public class Delaunay : MonoBehaviour
     /*Sole purpose of this list is the keep track of all our points from our pointsky data file set */
     [SerializeField] private List<Vector3> mPointSky = new List<Vector3>();
     [SerializeField] private List<Vector3> tempCenter = new List<Vector3>();
+    
+    List<Vector3> CornerBase = new List<Vector3>(); // Corner
+    List<Vector3> CenterBase = new List<Vector3>(); // Corner
 
     #endregion
     
@@ -95,32 +101,76 @@ public class Delaunay : MonoBehaviour
 
         //TODO: CREATE MESH FUNKER IKKE
         // CreateMesh();
-        CreateMesh3();
-        //CreateMesh2();
+        CreateGrid();
+        CreatePointsWithHeight();
         UpdateMesh();
     }
 
 
 
-    void CreateMesh3()
+    void CreatePointsWithHeight()
     {
+        
+        /*
+         * For hvert punkt så skal høyde kalkuleres ved:
+         * innenfor x område til x øvre grense og samme for z
+         * legge sammen de her og sette den høyden for et nytt punkt
+         * 
+         */
+        
+        
+        // calle in getheight
+        
+    }
+
+
+    float GetHeigh(Vector3 referance)
+    {
+
+        // Søke gjennom punkt sky
+        foreach (var bts in mPointSky)
+        {
+
+            var venstre = referance.x - Resolution / 2;
+            var hoyre = referance.x + Resolution / 2;
+            var opp = referance.z + Resolution / 2;
+            var ned = referance.z - Resolution / 2;
+            
+
+        }
+        
+        return 0f;
+    }
+    
+    void CreateGrid()
+    {
+
+
+        // Highest Floor
+        int zStepsHighestFloor = (int)zmax / Resolution;
+        int xStepsHighestFloor = (int)xmax / Resolution;
+        
+        Debug.Log("zSteps: " + zStepsHighestFloor + " xSteps: "+ xStepsHighestFloor);
+
+        
         // Bound Z, z begins at 0
-        for (int z = (int) zmin; z < zmax; z += ResolutionQuad)
+        for (int z = (int) zmin; z <= zStepsHighestFloor; z++)
         {
             // Bound X, x begins at 0
-            for (int x = (int) xmin; x < xmax; x += ResolutionQuad)
+            for (int x = (int) xmin; x <= xStepsHighestFloor; x++)
             {
-                // PointSky.
-                foreach (var vtx in mPointSky)
+                // Here we add the new corners of the grid from algoritme 10.6
+                CornerBase.Add(new Vector3(x*Resolution,0,z*Resolution));
+                
+                // This is because the center points will end outside
+                if (z < zStepsHighestFloor - 1 && x < xStepsHighestFloor - 1)
                 {
-
-
-
+                    var boa = new Vector3(x * Resolution + Resolution / 2, 0, z * Resolution + Resolution / 2);
+                    GetHeigh(boa);
+                    CenterBase.Add(boa);
                 }
-
+                
             }
-
-
         }
     }
 
@@ -343,6 +393,20 @@ public class Delaunay : MonoBehaviour
                Gizmos.DrawCube(vtxx, Vector3.one * 50f);
            } 
        }
+
+       foreach (var BTS in CornerBase)
+       {
+           Gizmos.color = Color.black;
+           Gizmos.DrawCube(BTS, Vector3.one * 6f);
+       }
+       
+       foreach (var KPOP in CenterBase)
+       {
+           Gizmos.color = Color.magenta;
+           Gizmos.DrawCube(KPOP, Vector3.one * 6f);
+       }
+       
+       
        
        
         
