@@ -52,13 +52,13 @@ public class Delaunay : MonoBehaviour
     // [SerializeField] private float BeforeConversionlargestz = default;       // maybe dont need to overwrite them
     
     // These are the ones used for xmin and xmax values
-    [SerializeField] private float smallestx = default;
-    [SerializeField] private float smallesty = default;
-    [SerializeField] private float smallestz = default;
+    private float smallestx = default;
+    private float smallesty = default;
+    private float smallestz = default;
  
-    [SerializeField] private float largestx = default;
-    [SerializeField] private float largesty = default;
-    [SerializeField] private float largestz = default;
+    private float largestx = default;
+    private float largesty = default;
+    private float largestz = default;
     
 
     [SerializeField] private float zmin = 0;
@@ -95,10 +95,34 @@ public class Delaunay : MonoBehaviour
 
         //TODO: CREATE MESH FUNKER IKKE
         // CreateMesh();
-        CreateMesh2();
+        CreateMesh3();
+        //CreateMesh2();
         UpdateMesh();
     }
 
+
+
+    void CreateMesh3()
+    {
+        // Bound Z, z begins at 0
+        for (int z = (int) zmin; z < zmax; z += ResolutionQuad)
+        {
+            // Bound X, x begins at 0
+            for (int x = (int) xmin; x < xmax; x += ResolutionQuad)
+            {
+                // PointSky.
+                foreach (var vtx in mPointSky)
+                {
+
+
+
+                }
+
+            }
+
+
+        }
+    }
 
     void CreateMesh2()
     {
@@ -124,7 +148,7 @@ public class Delaunay : MonoBehaviour
                 foreach (var vtx in mPointSky)
                 {
                     // our point is within the square size
-                    if (vtx.x >= x && vtx.x < x+ResolutionQuad &&  vtx.z >= z && vtx.z < z+ResolutionQuad) //TODO: MISSING LOGIC OF THE BOUNDS WE ARE ITERATING. RIGHT NOW WE GET 2000000 OF THE SAME POINTS LOL!
+                    if (vtx.x >= x && vtx.x < x+ResolutionQuad &&  vtx.z >= z && vtx.z < z+ResolutionQuad)
                     {
                         avgPoint += vtx;
                         avgHeight += vtx.y;
@@ -134,14 +158,30 @@ public class Delaunay : MonoBehaviour
 
                 if (pointCounter > 0) // given that we actually have a point here
                 {
+
+                    avgHeight /= pointCounter; //TODO SAVE SOMEWHERE ELSE
+                    
                     Vector3 pos = new Vector3(
                         (x + ResolutionQuad / 2),
-                        avgHeight,
-                        (z + ResolutionQuad) / 2);
+                        0,
+                        (z + ResolutionQuad / 2)
+                    );
                         
                     Instantiate(centerPrefab, pos, Quaternion.identity);
                     bucket.Add(pos);
                 }
+                
+                // if (pointCounter == 0) // given that we actually have a point here
+                // {
+                //     Vector3 pos = new Vector3(
+                //         (x + ResolutionQuad / 2),
+                //         0,
+                //         (z + ResolutionQuad / 2)
+                //     );
+                //         
+                //     Instantiate(centerPrefab, pos, Quaternion.identity);
+                //     bucket.Add(pos);
+                // }
                 
 
             } ///// Going back up / moving further
