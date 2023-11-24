@@ -104,17 +104,12 @@ public class Delaunay : MonoBehaviour
     {
 
 
-        Vector3 avgPoint = new Vector3(); 
+        Vector3 avgPoint = Vector3.zero;
         float avgHeight = 0;
-        
-        int c = 0;
-
-
-        float zzzmin=0, zzzmax=0, xxxmax = 0, xxxmin = 0;
         int pointCounter = 0;
 
         
-        for (int i = 0, z = (int)zmin; i < zmax; i+=ResolutionQuad)
+        for (int z = (int)zmin; z < zmax; z+=ResolutionQuad)
         {
             for (int x = (int)xmin; x < xmax; x+=ResolutionQuad)
             {
@@ -122,7 +117,6 @@ public class Delaunay : MonoBehaviour
                 // Reset or Flush the bucket
                 avgHeight = 0;
                 pointCounter = 0;
-                c = 0;
                 avgPoint = new Vector3(); // clear it
                 
                 
@@ -132,41 +126,28 @@ public class Delaunay : MonoBehaviour
                     // our point is within the square size
                     if (vtx.x >= x && vtx.x < x+ResolutionQuad &&  vtx.z >= z && vtx.z < z+ResolutionQuad) //TODO: MISSING LOGIC OF THE BOUNDS WE ARE ITERATING. RIGHT NOW WE GET 2000000 OF THE SAME POINTS LOL!
                     {
-                     // Add to bucket  
-                     bucket.Add(vtx);
-                     avgPoint.x += vtx.x;
-                     avgPoint.z += vtx.z;
-                     avgHeight += avgPoint.y;
-                     c++;
+                        avgPoint += vtx;
+                        avgHeight += vtx.y;
+                        pointCounter++;
                     }
                 }
-                
-                if (pointCounter)
-                
-                // Divide the point by the counter 'c'
-                // All points divided by c
 
-               
+                if (pointCounter > 0) // given that we actually have a point here
+                {
+                    Vector3 pos = new Vector3(
+                        (x + ResolutionQuad / 2),
+                        avgHeight,
+                        (z + ResolutionQuad) / 2);
+                        
+                    Instantiate(centerPrefab, pos, Quaternion.identity);
+                    bucket.Add(pos);
+                }
                 
-                Instantiate(centerPrefab, avgPoint, Quaternion.identity);
-              
-
 
             } ///// Going back up / moving further
             
         }
-
         
-        //Instantiate the new center points from the 
-        
-        
-        
-        Debug.Log("Finished looping");
-        
-        
-        
-        // THIS "vertices" IS SUPPOSED TO BE THE "PLANE"
-        // vertices = _vertices.ToArray();
     }
 
     
