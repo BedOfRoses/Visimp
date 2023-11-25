@@ -102,44 +102,80 @@ public class Delaunay : MonoBehaviour
         //TODO: CREATE MESH FUNKER IKKE
         // CreateMesh();
         CreateGrid();
-        CreatePointsWithHeight();
+       
         UpdateMesh();
     }
 
 
 
-    void CreatePointsWithHeight()
+
+
+    void CreateMesh4()
     {
+        int vert = 0;
+        int tris = 0;
         
-        /*
-         * For hvert punkt så skal høyde kalkuleres ved:
-         * innenfor x område til x øvre grense og samme for z
-         * legge sammen de her og sette den høyden for et nytt punkt
-         * 
-         */
-        
-        
-        // calle in getheight
-        
+        triangles = new int[(int)zmax * (int)xmax * 6];
+
+        for (int z = (int)zmin; z < (int)zmax; z++)
+        {
+            for (int x = (int) xmin; x < (int) xmax; x++)
+            {
+
+                triangles[tris + 0] = vert + 0;
+                triangles[tris + 1] = vert + (int)xmax + 1;
+                triangles[tris + 2] = vert + 1;
+                triangles[tris + 3] = vert + 1;
+                triangles[tris + 4] = vert + (int)xmax + 1;
+                triangles[tris + 5] = vert + (int)xmax + 2;
+
+                vert++;
+                tris += 6;
+            }
+
+            vert++;
+
+        }
     }
+    
 
-
-    float GetHeigh(Vector3 referance)
+    Vector3 GetHeigh(Vector3 referance)
     {
 
+        float AverageHeightOfNewPoint = 0;
+        int AVG_Counter = 0;
+        
         // Søke gjennom punkt sky
         foreach (var bts in mPointSky)
         {
 
-            var venstre = referance.x - Resolution / 2;
-            var hoyre = referance.x + Resolution / 2;
-            var opp = referance.z + Resolution / 2;
-            var ned = referance.z - Resolution / 2;
+            // Bounds
+            var left = referance.x - Resolution / 2;
+            var right = referance.x + Resolution / 2;
+            var up = referance.z + Resolution / 2;
+            var down = referance.z - Resolution / 2;
             
+            // Calculating the average point
+            if (bts.x >= left && bts.x <= right && bts.z >= down && bts.z <= up)
+            {
+                AVG_Counter++;
+                AverageHeightOfNewPoint += bts.y; 
+            }
 
         }
+
+
+        if (AverageHeightOfNewPoint > 0)
+        {
+            AverageHeightOfNewPoint /= AVG_Counter;
+            referance.y = AverageHeightOfNewPoint;
+        }
         
-        return 0f;
+
+        Debug.Log("referance.y : "+ referance.y.ToString("F2"));
+        
+        Debug.Log("AverageHeightOfNewPoint: "+ AverageHeightOfNewPoint);
+        return referance;
     }
     
     void CreateGrid()
@@ -150,7 +186,7 @@ public class Delaunay : MonoBehaviour
         int zStepsHighestFloor = (int)zmax / Resolution;
         int xStepsHighestFloor = (int)xmax / Resolution;
         
-        Debug.Log("zSteps: " + zStepsHighestFloor + " xSteps: "+ xStepsHighestFloor);
+        //Debug.Log("zSteps: " + zStepsHighestFloor + " xSteps: "+ xStepsHighestFloor);
 
         
         // Bound Z, z begins at 0
@@ -166,7 +202,7 @@ public class Delaunay : MonoBehaviour
                 if (z < zStepsHighestFloor - 1 && x < xStepsHighestFloor - 1)
                 {
                     var boa = new Vector3(x * Resolution + Resolution / 2, 0, z * Resolution + Resolution / 2);
-                    GetHeigh(boa);
+                    boa = GetHeigh(boa); // update the y value
                     CenterBase.Add(boa);
                 }
                 
@@ -240,7 +276,6 @@ public class Delaunay : MonoBehaviour
         
     }
 
-    
     
     void CreateMesh()
     {
