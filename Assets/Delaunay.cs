@@ -90,6 +90,7 @@ public class Delaunay : MonoBehaviour
     
     List<Vector3> CornerBase = new List<Vector3>(); // Corner
     List<Vector3> CenterBase = new List<Vector3>(); // Corner
+    List<Vector3> NewVertices = new List<Vector3>(); // Corner
 
     #endregion
     
@@ -108,8 +109,7 @@ public class Delaunay : MonoBehaviour
 
 
 
-
-
+    
     void CreateMesh4()
     {
         int vert = 0;
@@ -121,21 +121,23 @@ public class Delaunay : MonoBehaviour
         {
             for (int x = (int) xmin; x < (int) xmax; x++)
             {
-
-                triangles[tris + 0] = vert + 0;
-                triangles[tris + 1] = vert + (int)xmax + 1;
-                triangles[tris + 2] = vert + 1;
-                triangles[tris + 3] = vert + 1;
-                triangles[tris + 4] = vert + (int)xmax + 1;
-                triangles[tris + 5] = vert + (int)xmax + 2;
+                
+                
+                //triangles[tris + 0] = vert + 0;
+                //triangles[tris + 1] = vert + (int)xmax + 1;
+                //triangles[tris + 2] = vert + 1;
+                //triangles[tris + 3] = vert + 1;
+                //triangles[tris + 4] = vert + (int)xmax + 1;
+                //triangles[tris + 5] = vert + (int)xmax + 2;
 
                 vert++;
                 tris += 6;
             }
-
             vert++;
 
         }
+
+        
     }
     
 
@@ -208,6 +210,28 @@ public class Delaunay : MonoBehaviour
                 
             }
         }
+
+
+        
+        // This loop is to set the triangles.
+        for (int i = 0, z = (int) zmin; z <= zStepsHighestFloor; z++)
+        {
+            for (int x = (int) xmin; x <= xStepsHighestFloor; x++)
+            {
+
+               //  x * Resolution + Resolution / 2;
+               //  z * Resolution + Resolution / 2;
+                
+                triangles[i] = xStepsHighestFloor;
+                triangles[i+1] = xStepsHighestFloor;
+                
+                i++;
+            }
+        }
+
+
+
+
     }
 
     void CreateMesh2()
