@@ -26,6 +26,8 @@ public class Delaunay : MonoBehaviour
     [SerializeField] private GameObject centerPrefab;
 
     [SerializeField] private bool bDrawDebugGizmos = true;
+    [SerializeField] private bool bDrawDebugLine = true;
+    [SerializeField] private bool bTrekantTest = true;
     
     [SerializeField] List<Vector3> bucket = new List<Vector3>();  // Store vtx of points within space
 
@@ -97,11 +99,7 @@ public class Delaunay : MonoBehaviour
 
     private void Start()
     {
-        mesh = new Mesh();
-        GetComponent<MeshFilter>().mesh = mesh;
-
-        //TODO: CREATE MESH FUNKER IKKE
-        // CreateMesh();
+        
         CreateGrid();
        
         UpdateMesh();
@@ -191,6 +189,7 @@ public class Delaunay : MonoBehaviour
         //Debug.Log("zSteps: " + zStepsHighestFloor + " xSteps: "+ xStepsHighestFloor);
 
         
+        // Loop for setting the height of the center points
         // Bound Z, z begins at 0
         for (int z = (int) zmin; z <= zStepsHighestFloor; z++)
         {
@@ -211,23 +210,146 @@ public class Delaunay : MonoBehaviour
             }
         }
 
+        //TODO: SET THE VERTICES BE THE CORNER BASE
+        vertices = CenterBase.ToArray();
+
+        // just loop out all the points
+        // for(int i = 0; i < CenterBase.Count - 1; i++)
+        // {
+        //     // Debug.Log("btzz: "+ btzz.ToString("F2"));
+        //     Gizmos.color = Color.black;
+        //     Gizmos.DrawLine(CenterBase[i], CenterBase[i+1]);
+        //     // Gizmos.DrawLine(btzz[i], btzz[i+1]);
+        // }
+
+        int vert = 0;
+        int tris = 0;
+
+        var tempList = new List<int>();
+      
+
+       
+        // for (int z = (int) zmin; z < zStepsHighestFloor; z++)
+        // {
+        //     // Bound X, x begins at 0
+        //     for (int x = (int) xmin; x < xStepsHighestFloor; x++)
+        //     {
+        //         int index = (z * zStepsHighestFloor) + x + z;
+        //
+        //         //first triangle
+        //         tempList.Add(index + zStepsHighestFloor);
+        //         tempList.Add(index+(zStepsHighestFloor)+1);
+        //         tempList.Add(index+(xStepsHighestFloor)+2);
+        //         
+        //         // second triangle
+        //         tempList.Add(index + xStepsHighestFloor);
+        //         tempList.Add(index + xStepsHighestFloor + 2);
+        //         tempList.Add(index + 1);
+        //         
+        //         
+        //     }
+        // }
+        
+        //zsteps = 23
+        //xsteps = 31
+        
+        //first triangle
+        int zt = (int)zmin;
+        int xt = (int) xmin;
+        
+        // var index = (zt * zStepsHighestFloor) + xt + zt;
+        
+        int index = 0;
+        int step1 = default;
+        int step2 = default;
+        int step3 = default;
+        int step4 = default;
+        int step5 = default;
+        int step6 = default;
+        
+        for (int x = 0; x < xStepsHighestFloor; x++)
+        {
+            step1 = index; // 0
+            step2 = index + xStepsHighestFloor - 1; // 0 + 31 - 1 = 30
+            step3 = index + 1; // 0 
+       
+            step4 =index + 1;
+            step5 =index + xStepsHighestFloor - 1;
+            step6 =index + xStepsHighestFloor;
+            index++;
+            
+            tempList.Add(step1);
+            tempList.Add(step2);
+            tempList.Add(step3);
+            tempList.Add(step4);
+            tempList.Add(step5);
+            tempList.Add(step6);
+            
+        }
+        Debug.Log("TempList: "+ tempList.ToString());
+        
+        // Debug.Log("Index: "+index+
+        //                    " Step1: "+step1+ " step2: "+ step2+ " step3: "+ step3+ " step4: "+step4+" step5: "+step5
+        //                        +" step6: " + step6);
+        
+        // tempList.Add(0);     //
+        // tempList.Add(30);    //
+        // tempList.Add(1);     //
+        //                      //
+        // tempList.Add(1);     //
+        // tempList.Add(30);    //
+        // tempList.Add(31);    //
+        
+        // Gizmos.DrawLine(vertices[0],vertices[1]);
+        // Gizmos.DrawLine(vertices[0],CenterBase[30]);
+        // Gizmos.DrawLine(vertices[30],CenterBase[1]);
+        
+
+        foreach (var tri in tempList)
+        {
+            Debug.Log(tri.ToString());
+        }
+        triangles = tempList.ToArray();
+        
+        // for (int x = (int) xmin; x <= xStepsHighestFloor; x++)
+        // {
+        //     triangles = new int[3];
+        //     triangles[0] = 0;
+        //     triangles[1] = 1;
+        //     triangles[2] = 31;
+        //
+        // }
 
         
-        // This loop is to set the triangles.
-        for (int i = 0, z = (int) zmin; z <= zStepsHighestFloor; z++)
-        {
-            for (int x = (int) xmin; x <= xStepsHighestFloor; x++)
-            {
+        
+        Debug.Log("Resoltion: " + Resolution);
+        Debug.Log("xStep: " + xStepsHighestFloor);
+        Debug.Log("zStep: " + zStepsHighestFloor);
 
-               //  x * Resolution + Resolution / 2;
-               //  z * Resolution + Resolution / 2;
-                
-                triangles[i] = xStepsHighestFloor;
-                triangles[i+1] = xStepsHighestFloor;
-                
-                i++;
-            }
-        }
+        // CenterBase is a List<Vector3> of all the points
+        // Draw a line between all of these 
+        
+       ////// int tris = 0;
+        // This loop is to create the sets of triangles.
+        // for (int z = (int) zmin; z <= zStepsHighestFloor; z++)
+        // {
+        //     for (int x = (int) xmin; x <= xStepsHighestFloor; x++)
+        //     {
+        //
+        //        //  x * Resolution + Resolution / 2;
+        //        //  z * Resolution + Resolution / 2;
+        //         
+        //        
+        //         //triangles[tris + 0] = x;
+        //         //triangles[tris + 1] = x * Resolution;
+        //         //triangles[tris + 2] = xStepsHighestFloor;
+        //         //triangles[tris + 3] = xStepsHighestFloor;
+        //         //triangles[tris + 4] = xStepsHighestFloor;
+        //         //triangles[tris + 5] = xStepsHighestFloor;
+        //         
+        //         tris += 6;
+        //     }
+        // }
 
 
 
@@ -464,7 +586,23 @@ public class Delaunay : MonoBehaviour
            Gizmos.color = Color.magenta;
            Gizmos.DrawCube(KPOP, Vector3.one * 6f);
        }
-       
+
+       if (bDrawDebugLine)
+       {
+           for(int i = 0; i < CenterBase.Count - 1; i++)
+           {
+               Gizmos.color = Color.black;
+               Gizmos.DrawLine(CenterBase[i], CenterBase[i+1]);
+           }
+       }
+
+       if (bTrekantTest)
+       {
+           Gizmos.color = Color.green;
+           Gizmos.DrawLine(vertices[0],vertices[1]);
+           Gizmos.DrawLine(vertices[0],CenterBase[30]);
+           Gizmos.DrawLine(vertices[30],CenterBase[1]);
+       }
        
        
        
@@ -488,6 +626,10 @@ public class Delaunay : MonoBehaviour
     
     private void Awake()
     {
+        
+        mesh = new Mesh();
+        GetComponent<MeshFilter>().mesh = mesh;
+        
         /*Firstly just read the data and give the information to different variables, like mPointSky etc*/
         ReadData(nameee);
         

@@ -157,7 +157,9 @@ MonoBehaviour:
   triangles: 
   centerPrefab: {fileID: 7353314191793013804, guid: 638d79779443932498cc892a854cbdb5,
     type: 3}
-  bDrawDebugGizmos: 0
+  bDrawDebugGizmos: 1
+  bDrawDebugLine: 1
+  bTrekantTest: 1
   bucket: []
   Resolution: 50
   ResolutionQuad: 20
