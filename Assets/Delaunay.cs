@@ -266,32 +266,36 @@ public class Delaunay : MonoBehaviour
         int step4 = default;
         int step5 = default;
         int step6 = default;
-        
-        for (int x = 0; x < xStepsHighestFloor; x++)
+
+        // TODO: Få denne ytre til å fungere.
+        for (int i = 0; i < zStepsHighestFloor; i++)
         {
-            step1 = index; // 0
-            step2 = index + xStepsHighestFloor - 1; // 0 + 31 - 1 = 30
-            step3 = index + 1; // 0 
-       
-            step4 =index + 1;
-            step5 =index + xStepsHighestFloor - 1;
-            step6 =index + xStepsHighestFloor;
-            index++;
-            
-            tempList.Add(step1);
-            tempList.Add(step2);
-            tempList.Add(step3);
-            tempList.Add(step4);
-            tempList.Add(step5);
-            tempList.Add(step6);
-            
+            // TODO: Denne indre loopen fungerer
+            for (int x = 0; x < xStepsHighestFloor; x++)
+            {
+                step1 = index; // 0
+                step2 = index + xStepsHighestFloor - 1; // 0 + 31 - 1 = 30
+                step3 = index + 1; // 0 
+           
+                step4 = index + 1;
+                step5 = index + xStepsHighestFloor - 1;
+                step6 = index + xStepsHighestFloor;
+                index++;
+                
+                tempList.Add(step1);
+                tempList.Add(step2);
+                tempList.Add(step3);
+                tempList.Add(step4);
+                tempList.Add(step5);
+                tempList.Add(step6);
+                
+            }
+        index++;
         }
+
         Debug.Log("TempList: "+ tempList.ToString());
         
-        // Debug.Log("Index: "+index+
-        //                    " Step1: "+step1+ " step2: "+ step2+ " step3: "+ step3+ " step4: "+step4+" step5: "+step5
-        //                        +" step6: " + step6);
-        
+   
         // tempList.Add(0);     //
         // tempList.Add(30);    //
         // tempList.Add(1);     //
@@ -300,9 +304,7 @@ public class Delaunay : MonoBehaviour
         // tempList.Add(30);    //
         // tempList.Add(31);    //
         
-        // Gizmos.DrawLine(vertices[0],vertices[1]);
-        // Gizmos.DrawLine(vertices[0],CenterBase[30]);
-        // Gizmos.DrawLine(vertices[30],CenterBase[1]);
+     
         
 
         foreach (var tri in tempList)
@@ -326,30 +328,7 @@ public class Delaunay : MonoBehaviour
         Debug.Log("xStep: " + xStepsHighestFloor);
         Debug.Log("zStep: " + zStepsHighestFloor);
 
-        // CenterBase is a List<Vector3> of all the points
-        // Draw a line between all of these 
-        
-       ////// int tris = 0;
-        // This loop is to create the sets of triangles.
-        // for (int z = (int) zmin; z <= zStepsHighestFloor; z++)
-        // {
-        //     for (int x = (int) xmin; x <= xStepsHighestFloor; x++)
-        //     {
-        //
-        //        //  x * Resolution + Resolution / 2;
-        //        //  z * Resolution + Resolution / 2;
-        //         
-        //        
-        //         //triangles[tris + 0] = x;
-        //         //triangles[tris + 1] = x * Resolution;
-        //         //triangles[tris + 2] = xStepsHighestFloor;
-        //         //triangles[tris + 3] = xStepsHighestFloor;
-        //         //triangles[tris + 4] = xStepsHighestFloor;
-        //         //triangles[tris + 5] = xStepsHighestFloor;
-        //         
-        //         tris += 6;
-        //     }
-        // }
+       
 
 
 
@@ -596,13 +575,13 @@ public class Delaunay : MonoBehaviour
            }
        }
 
-       if (bTrekantTest)
-       {
-           Gizmos.color = Color.green;
-           Gizmos.DrawLine(vertices[0],vertices[1]);
-           Gizmos.DrawLine(vertices[0],CenterBase[30]);
-           Gizmos.DrawLine(vertices[30],CenterBase[1]);
-       }
+      // if (bTrekantTest)
+      // {
+      //     Gizmos.color = Color.green;
+      //     Gizmos.DrawLine(vertices[0],vertices[1]);
+      //     Gizmos.DrawLine(vertices[0],CenterBase[30]);
+      //     Gizmos.DrawLine(vertices[30],CenterBase[1]);
+      // }
        
        
        
