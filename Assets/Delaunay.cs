@@ -15,10 +15,10 @@ using Vector3 = UnityEngine.Vector3;
 [RequireComponent(typeof(MeshFilter))]
 public class Delaunay : MonoBehaviour
 {
-    private Mesh mesh;
+    [SerializeField] public Mesh mesh;
 
-    [SerializeField] private Vector3[] vertices;
-    [SerializeField] private int[] triangles;
+    [SerializeField] public Vector3[] vertices;
+    [SerializeField] public int[] triangles;
     
     CultureInfo cult = new CultureInfo(3); 
     CultureInfo cultureInfo = new CultureInfo("en-US");
@@ -377,8 +377,9 @@ public class Delaunay : MonoBehaviour
                         0,
                         (z + ResolutionQuad / 2)
                     );
-                        
-                    Instantiate(centerPrefab, pos, Quaternion.identity);
+                      
+                    //TODO: REMOVE INSTANTIATE
+                    //Instantiate(centerPrefab, pos, Quaternion.identity);
                     bucket.Add(pos);
                 }
                 
@@ -535,64 +536,64 @@ public class Delaunay : MonoBehaviour
 
     
 
-    private void OnDrawGizmos()
-    {
-        if (vertices == null) return;
-
-       // foreach (var vertx in vertices)
-       // {
-       //     Gizmos.color = Color.green;
-       //     Gizmos.DrawCube(vertx, Vector3.one * 60f);
-       // }
-
-       if (bDrawDebugGizmos)
-       {
-           foreach (var vtxx in mPointSky)
-           {
-               Gizmos.color = Color.blue;
-               Gizmos.DrawCube(vtxx, Vector3.one * 50f);
-           } 
-       }
-
-       foreach (var BTS in CornerBase)
-       {
-           Gizmos.color = Color.black;
-           Gizmos.DrawCube(BTS, Vector3.one * 6f);
-       }
-       
-       foreach (var KPOP in CenterBase)
-       {
-           Gizmos.color = Color.magenta;
-           Gizmos.DrawCube(KPOP, Vector3.one * 6f);
-       }
-
-       if (bDrawDebugLine)
-       {
-           for(int i = 0; i < CenterBase.Count - 1; i++)
-           {
-               Gizmos.color = Color.black;
-               Gizmos.DrawLine(CenterBase[i], CenterBase[i+1]);
-           }
-       }
-
-      // if (bTrekantTest)
-      // {
-      //     Gizmos.color = Color.green;
-      //     Gizmos.DrawLine(vertices[0],vertices[1]);
-      //     Gizmos.DrawLine(vertices[0],CenterBase[30]);
-      //     Gizmos.DrawLine(vertices[30],CenterBase[1]);
-      // }
-       
-       
-       
-        
-        // foreach (var vtx in tempCenter)
-        // {
-        //     Gizmos.color = Color.blue;
-        //     Gizmos.DrawCube(vtx,Vector3.one * 60f);
-        // }
-    
-    }
+    // private void OnDrawGizmos()
+    // {
+    //     if (vertices == null) return;
+    //
+    //    // foreach (var vertx in vertices)
+    //    // {
+    //    //     Gizmos.color = Color.green;
+    //    //     Gizmos.DrawCube(vertx, Vector3.one * 60f);
+    //    // }
+    //
+    //    if (bDrawDebugGizmos)
+    //    {
+    //        foreach (var vtxx in mPointSky)
+    //        {
+    //            Gizmos.color = Color.blue;
+    //            Gizmos.DrawCube(vtxx, Vector3.one * 50f);
+    //        } 
+    //    }
+    //
+    //    foreach (var BTS in CornerBase)
+    //    {
+    //        Gizmos.color = Color.black;
+    //        Gizmos.DrawCube(BTS, Vector3.one * 6f);
+    //    }
+    //    
+    //    foreach (var KPOP in CenterBase)
+    //    {
+    //        Gizmos.color = Color.magenta;
+    //        Gizmos.DrawCube(KPOP, Vector3.one * 6f);
+    //    }
+    //
+    //    if (bDrawDebugLine)
+    //    {
+    //        for(int i = 0; i < CenterBase.Count - 1; i++)
+    //        {
+    //            Gizmos.color = Color.black;
+    //            Gizmos.DrawLine(CenterBase[i], CenterBase[i+1]);
+    //        }
+    //    }
+    //
+    //   // if (bTrekantTest)
+    //   // {
+    //   //     Gizmos.color = Color.green;
+    //   //     Gizmos.DrawLine(vertices[0],vertices[1]);
+    //   //     Gizmos.DrawLine(vertices[0],CenterBase[30]);
+    //   //     Gizmos.DrawLine(vertices[30],CenterBase[1]);
+    //   // }
+    //    
+    //    
+    //    
+    //     
+    //     // foreach (var vtx in tempCenter)
+    //     // {
+    //     //     Gizmos.color = Color.blue;
+    //     //     Gizmos.DrawCube(vtx,Vector3.one * 60f);
+    //     // }
+    //
+    // }
 
     void UpdateMesh()
     {
@@ -874,4 +875,4 @@ public class Delaunay : MonoBehaviour
     
     
     
-}
+} // end
