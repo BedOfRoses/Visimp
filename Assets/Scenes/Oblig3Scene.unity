@@ -444,11 +444,12 @@ MonoBehaviour:
   previousNormal: {x: 0, y: 0, z: 0}
   collitionNormal: {x: 0, y: 0, z: 0}
   myTrekant: {fileID: 137354570}
+  meshRef: {fileID: 0}
   vertex0: {x: 0, y: 0, z: 0}
   vertex1: {x: 0, y: 0, z: 0}
   vertex2: {x: 0, y: 0, z: 0}
   barysentricCoordinateToBall: {x: 0, y: 0, z: 0}
-  spawnPosition: {x: 0, y: 0}
+  spawnPosition: {x: 276, y: 29.1}
   timeOfFirstTriangle: 0
   radius: 0.015
   spawnPos3: {x: 0, y: 0, z: 0}
@@ -716,7 +717,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1000
+  far clip plane: 2221.65
   field of view: 60
   orthographic: 0
   orthographic size: 5
