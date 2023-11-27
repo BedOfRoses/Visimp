@@ -268,10 +268,10 @@ public class Delaunay : MonoBehaviour
         int step6 = default;
 
         // TODO: Få denne ytre til å fungere.
-        for (int i = 0; i < zStepsHighestFloor; i++)
+        for (int i = 0; i < zStepsHighestFloor - 2; i++)
         {
             // TODO: Denne indre loopen fungerer
-            for (int x = 0; x < xStepsHighestFloor; x++)
+            for (int x = 0; x < xStepsHighestFloor - 2; x++)
             {
                 step1 = index; // 0
                 step2 = index + xStepsHighestFloor - 1; // 0 + 31 - 1 = 30
@@ -289,8 +289,8 @@ public class Delaunay : MonoBehaviour
                 tempList.Add(step5);
                 tempList.Add(step6);
                 
-            }
-        index++;
+            } 
+            index++;
         }
 
         Debug.Log("TempList: "+ tempList.ToString());
