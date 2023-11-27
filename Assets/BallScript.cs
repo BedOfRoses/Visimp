@@ -98,41 +98,38 @@ public class BallScript : MonoBehaviour
     
     void move()
     {
-        // myTrekant.mesh.triangles.Length = 12
+        
+        
+        // Find the current triangle we are at and save this
+        //
+        // if we move outside of the triangle,
+        // do the search of the triangles until the triangle is the same as barysentric
+        
+        
+
+        int[] currentTriangle = new []{1,2,3};
+        int[] previousTriangle = new []{1,2,3};
+        
+        
         for (int i = 0; i < meshRef.triangles.Length;  i+=3 )
         {
-            current_Index = i / 3; //Deler på tre siden vi itererer med i+=3
-            Vector3 v0, v1, v2; 
-            // Iterate through the vertex data
-            int index_0 = meshRef.triangles[i];
-            int index_1 = meshRef.triangles[i+1];
-            int index_2 = meshRef.triangles[i+2];
-            
-            v0 = meshRef.vertices[index_0];
-            v1 = meshRef.vertices[index_1];
-            v2 = meshRef.vertices[index_2];
-            
-            vertex0 = new Vector3(v0.x,v0.y,v0.z);
-            vertex1 = new Vector3(v1.x,v1.y,v1.z);
-            vertex2 = new Vector3(v2.x, v2.y,v2.z);
+            current_Index = i / 3;
+
+           Vector3 v0 = meshRef.vertices[meshRef.triangles[i]];
+           Vector3 v1 = meshRef.vertices[meshRef.triangles[i+1]];
+           Vector3 v2 = meshRef.vertices[meshRef.triangles[i+2]];
            
-            
-            barysentricCoordinateToBall = BarycentricFunction(
-                new Vector2(v0.x, v0.z), 
-                new Vector2(v1.x, v1.z) ,
-                new Vector2(v2.x, v2.z), 
-                new Vector2(transform.position.x, transform.position.z));
-            
-            
-            
+           barysentricCoordinateToBall = BarycentricFunction(
+               new Vector2(v0.x, v0.z), 
+               new Vector2(v1.x, v1.z) ,
+               new Vector2(v2.x, v2.z), 
+               new Vector2(transform.position.x, transform.position.z));
+           
+
             if (barysentricCoordinateToBall is{x:>= 0, y:>= 0, z:>= 0})
             {
-                
+                currentNormal  = Vector3.Cross((v1 - v0), (v2 - v0)).normalized; 
                 timeOfFirstTriangle += Time.fixedDeltaTime;
-                
-                // Normalvektor i planet N = (_v1 - _v0) crossproduct (_v2 - _v0)
-                 currentNormal  = Vector3.Cross((v1 - v0), (v2 - v0)).normalized; 
-               
                 
                 // beregn akselasjonsvektor - ligning (8.12)
                 accelerationVector = new Vector3(
