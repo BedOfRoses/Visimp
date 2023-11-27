@@ -34,6 +34,7 @@ public class BallScript : MonoBehaviour
 
   #region referanser
   public Delaunay myTrekant;
+  public Mesh meshRef;
   #endregion
   
   #region Vertexer
@@ -75,6 +76,11 @@ public class BallScript : MonoBehaviour
        transform.position = currentPosition;
        previousPosition = currentPosition;
        spawnPos3 = currentPosition;
+
+       // Get the referance
+       if(myTrekant)
+         meshRef = myTrekant.mesh;
+
    }
 
   
@@ -83,7 +89,7 @@ public class BallScript : MonoBehaviour
     {
         
         
-        // move();
+        move();
         // CollisionCorrection();
 
         deltaPosition = currentPosition - previousPosition;
@@ -93,18 +99,18 @@ public class BallScript : MonoBehaviour
     void move()
     {
         // myTrekant.mesh.triangles.Length = 12
-        for (int i = 0; i < myTrekant.mesh.triangles.Length;  i+=3 )
+        for (int i = 0; i < meshRef.triangles.Length;  i+=3 )
         {
             current_Index = i / 3; //Deler på tre siden vi itererer med i+=3
             Vector3 v0, v1, v2; 
             // Iterate through the vertex data
-            int index_0 = myTrekant.mesh.triangles[i];
-            int index_1 = myTrekant.mesh.triangles[i+1];
-            int index_2 = myTrekant.mesh.triangles[i+2];
+            int index_0 = meshRef.triangles[i];
+            int index_1 = meshRef.triangles[i+1];
+            int index_2 = meshRef.triangles[i+2];
             
-            v0 = myTrekant.mesh.vertices[index_0];
-            v1 = myTrekant.mesh.vertices[index_1];
-            v2 = myTrekant.mesh.vertices[index_2];
+            v0 = meshRef.vertices[index_0];
+            v1 = meshRef.vertices[index_1];
+            v2 = meshRef.vertices[index_2];
             
             vertex0 = new Vector3(v0.x,v0.y,v0.z);
             vertex1 = new Vector3(v1.x,v1.y,v1.z);
@@ -141,7 +147,7 @@ public class BallScript : MonoBehaviour
                 currentVelocity = previousVelocity + accelerationVector * Time.fixedDeltaTime; // ligning (8.14)
                 previousVelocity = currentVelocity;
                 // previousVelocity = deltaPos * Time.fixedDeltaTime;
-
+            
                 // Oppdaterer posisjon ligning  ( 8 . 1 5 )
                 // Update Position ( Pk+1 = Pk + Vk*deltaTime )
                 currentPosition = previousPosition + previousVelocity * Time.fixedDeltaTime; // ligning (8.15)
