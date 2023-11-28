@@ -237,7 +237,6 @@ public class BallScript : MonoBehaviour
     Vector3 CalculateCurrentNormal(Vector3 vv0,Vector3 vv1, Vector3 vv2)
     {
         return (Vector3.Cross((vv1 - vv0), (vv2 - vv0)).normalized);
-
     }
     Vector3 CalculateVelocityCorrection()
     {
@@ -270,22 +269,7 @@ public class BallScript : MonoBehaviour
         return true;
     }
     
-    
-    // private void OnDrawGizmos()
-    // {
-    //     var position = transform.position;
-    //     Gizmos.color = Color.red;
-    //     Gizmos.DrawRay(position, currentNormal);
-    //     
-    //     Gizmos.color = Color.green;
-    //     Gizmos.DrawRay(position, currentVelocity);
-    //
-    //     Gizmos.color = Color.blue;
-    //     Gizmos.DrawRay(position, collitionNormal);
-    //     
-    // }
-
-
+   
     private static Vector3 BarycentricFunction(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 pt)
     {
         Vector2 p12 = p2 - p1;
