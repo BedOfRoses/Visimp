@@ -186,14 +186,16 @@ public class BallScript : MonoBehaviour
     {
 
         int triangleLength = meshRef.triangles.Length;
+
+        Vector3 v0, v1, v2;
         
         for (int i = 0; i < triangleLength;  i+=3 )
-        {
+        { 
             current_Index = i / 3;
 
-           Vector3 v0 = meshRef.vertices[meshRef.triangles[i]];
-           Vector3 v1 = meshRef.vertices[meshRef.triangles[i+1]];
-           Vector3 v2 = meshRef.vertices[meshRef.triangles[i+2]];
+            v0 = meshRef.vertices[meshRef.triangles[i]];
+            v1 = meshRef.vertices[meshRef.triangles[i+1]];
+            v2 = meshRef.vertices[meshRef.triangles[i+2]];
            
            barysentricCoordinateToBall = BarycentricFunction(
                new Vector2(v0.x, v0.z), 
