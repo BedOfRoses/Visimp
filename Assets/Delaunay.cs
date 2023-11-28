@@ -16,46 +16,16 @@ using Vector3 = UnityEngine.Vector3;
 public class Delaunay : MonoBehaviour
 {
     [SerializeField] public Mesh mesh;
-
     [SerializeField] public Vector3[] vertices;
     [SerializeField] public int[] triangles;
-    
+    [SerializeField] public int[] triangleIndex;
     CultureInfo cult = new CultureInfo(3); 
     CultureInfo cultureInfo = new CultureInfo("en-US");
-
     [SerializeField] private GameObject centerPrefab;
-
-    [SerializeField] private bool bDrawDebugGizmos = true;
-    [SerializeField] private bool bDrawDebugLine = true;
-    [SerializeField] private bool bTrekantTest = true;
-    
-    [SerializeField] List<Vector3> bucket = new List<Vector3>();  // Store vtx of points within space
-
     [SerializeField] private int Resolution = 50;
-
-    
-    public struct quad
-    {
-        public float NE; //NE
-        public float NW; //NW
-        public float SE; //SE
-        public float SW; //SW
-        public Vector3 point;
-    }
-    [SerializeField] private int ResolutionQuad = 20;
     
 
     #region MyRegion
-
-    
-    // These values are before we change the minimum and maximum sizes          // maybe dont need to overwrite them    
-    // [SerializeField] private float BeforeConversionsmallestx = default;      // maybe dont need to overwrite them
-    // [SerializeField] private float BeforeConversionsmallesty = default;      // maybe dont need to overwrite them
-    // [SerializeField] private float BeforeConversionsmallestz = default;      // maybe dont need to overwrite them
-    // [SerializeField] private float BeforeConversionlargestx = default;       // maybe dont need to overwrite them
-    // [SerializeField] private float BeforeConversionlargesty = default;       // maybe dont need to overwrite them
-    // [SerializeField] private float BeforeConversionlargestz = default;       // maybe dont need to overwrite them
-    
     // These are the ones used for xmin and xmax values
     private float smallestx = default;
     private float smallesty = default;
@@ -70,14 +40,6 @@ public class Delaunay : MonoBehaviour
     [SerializeField] private float xmin = 0;
     [SerializeField] private float zmax = 0;
     [SerializeField] private float xmax = 0;
-
-    
-    [SerializeField] private Vector3 NE = Vector3.zero;
-    [SerializeField] private Vector3 NW = Vector3.zero;
-    [SerializeField] private Vector3 SW = Vector3.zero;
-    [SerializeField] private Vector3 SE = Vector3.zero;
-
-    [SerializeField] private List<Vector3> points = new List<Vector3>();
     #endregion
 
     /*Self-note: if const, then [SerializeField] won't work */
@@ -85,58 +47,22 @@ public class Delaunay : MonoBehaviour
     public string nameee;
 
     #region Data Storage of Point Sky
-    
     /*Sole purpose of this list is the keep track of all our points from our pointsky data file set */
     [SerializeField] private List<Vector3> mPointSky = new List<Vector3>();
-    [SerializeField] private List<Vector3> tempCenter = new List<Vector3>();
-    
     List<Vector3> CornerBase = new List<Vector3>(); // Corner
     List<Vector3> CenterBase = new List<Vector3>(); // Corner
-    List<Vector3> NewVertices = new List<Vector3>(); // Corner
-
     #endregion
     
 
     private void Start()
     {
-        
         CreateGrid();
-       
         UpdateMesh();
+        mPointSky.Clear(); // clear this memory we dont need anymore
+        CornerBase.Clear();
+        CenterBase.Clear();
     }
 
-
-
-    
-    void CreateMesh4()
-    {
-        int vert = 0;
-        int tris = 0;
-        
-        triangles = new int[(int)zmax * (int)xmax * 6];
-
-        for (int z = (int)zmin; z < (int)zmax; z++)
-        {
-            for (int x = (int) xmin; x < (int) xmax; x++)
-            {
-                
-                
-                //triangles[tris + 0] = vert + 0;
-                //triangles[tris + 1] = vert + (int)xmax + 1;
-                //triangles[tris + 2] = vert + 1;
-                //triangles[tris + 3] = vert + 1;
-                //triangles[tris + 4] = vert + (int)xmax + 1;
-                //triangles[tris + 5] = vert + (int)xmax + 2;
-
-                vert++;
-                tris += 6;
-            }
-            vert++;
-
-        }
-
-        
-    }
     
 
     Vector3 GetHeigh(Vector3 referance)
@@ -210,67 +136,26 @@ public class Delaunay : MonoBehaviour
             }
         }
 
-        //TODO: SET THE VERTICES BE THE CORNER BASE
         vertices = CenterBase.ToArray();
 
-        // just loop out all the points
-        // for(int i = 0; i < CenterBase.Count - 1; i++)
-        // {
-        //     // Debug.Log("btzz: "+ btzz.ToString("F2"));
-        //     Gizmos.color = Color.black;
-        //     Gizmos.DrawLine(CenterBase[i], CenterBase[i+1]);
-        //     // Gizmos.DrawLine(btzz[i], btzz[i+1]);
-        // }
+        
 
         int vert = 0;
         int tris = 0;
 
         var tempList = new List<int>();
-      
-
-       
-        // for (int z = (int) zmin; z < zStepsHighestFloor; z++)
-        // {
-        //     // Bound X, x begins at 0
-        //     for (int x = (int) xmin; x < xStepsHighestFloor; x++)
-        //     {
-        //         int index = (z * zStepsHighestFloor) + x + z;
-        //
-        //         //first triangle
-        //         tempList.Add(index + zStepsHighestFloor);
-        //         tempList.Add(index+(zStepsHighestFloor)+1);
-        //         tempList.Add(index+(xStepsHighestFloor)+2);
-        //         
-        //         // second triangle
-        //         tempList.Add(index + xStepsHighestFloor);
-        //         tempList.Add(index + xStepsHighestFloor + 2);
-        //         tempList.Add(index + 1);
-        //         
-        //         
-        //     }
-        // }
-        
-        //zsteps = 23
-        //xsteps = 31
-        
-        //first triangle
-        int zt = (int)zmin;
-        int xt = (int) xmin;
-        
-        // var index = (zt * zStepsHighestFloor) + xt + zt;
         
         int index = 0;
-        int step1 = default;
-        int step2 = default;
-        int step3 = default;
-        int step4 = default;
-        int step5 = default;
-        int step6 = default;
+        int step1 = default; // first triangle
+        int step2 = default; // first triangle
+        int step3 = default; // first triangle
+        int step4 = default; // second triangle
+        int step5 = default; // second triangle
+        int step6 = default; // second triangle
 
-        // TODO: Få denne ytre til å fungere.
+        
         for (int i = 0; i < zStepsHighestFloor - 2; i++)
         {
-            // TODO: Denne indre loopen fungerer
             for (int x = 0; x < xStepsHighestFloor - 2; x++)
             {
                 step1 = index; // 0
@@ -289,312 +174,25 @@ public class Delaunay : MonoBehaviour
                 tempList.Add(step5);
                 tempList.Add(step6);
                 
+                
             } 
             index++;
         }
-
-        Debug.Log("TempList: "+ tempList.ToString());
-        
-   
-        // tempList.Add(0);     //
-        // tempList.Add(30);    //
-        // tempList.Add(1);     //
-        //                      //
-        // tempList.Add(1);     //
-        // tempList.Add(30);    //
-        // tempList.Add(31);    //
-        
-     
-        
 
         foreach (var tri in tempList)
         {
             Debug.Log(tri.ToString());
         }
         triangles = tempList.ToArray();
-        
-        // for (int x = (int) xmin; x <= xStepsHighestFloor; x++)
-        // {
-        //     triangles = new int[3];
-        //     triangles[0] = 0;
-        //     triangles[1] = 1;
-        //     triangles[2] = 31;
-        //
-        // }
-
-        
-        
+    
         Debug.Log("Resoltion: " + Resolution);
         Debug.Log("xStep: " + xStepsHighestFloor);
         Debug.Log("zStep: " + zStepsHighestFloor);
-
-       
-
-
-
-
     }
-
-    void CreateMesh2()
-    {
-
-
-        Vector3 avgPoint = Vector3.zero;
-        float avgHeight = 0;
-        int pointCounter = 0;
-
-        
-        for (int z = (int)zmin; z < zmax; z+=ResolutionQuad)
-        {
-            for (int x = (int)xmin; x < xmax; x+=ResolutionQuad)
-            {
-                
-                // Reset or Flush the bucket
-                avgHeight = 0;
-                pointCounter = 0;
-                avgPoint = new Vector3(); // clear it
-                
-                
-                //Traverse within a space of the x and z axis. Here we will add them into a bucket and create new "center" dots
-                foreach (var vtx in mPointSky)
-                {
-                    // our point is within the square size
-                    if (vtx.x >= x && vtx.x < x+ResolutionQuad &&  vtx.z >= z && vtx.z < z+ResolutionQuad)
-                    {
-                        avgPoint += vtx;
-                        avgHeight += vtx.y;
-                        pointCounter++;
-                    }
-                }
-
-                if (pointCounter > 0) // given that we actually have a point here
-                {
-
-                    avgHeight /= pointCounter; //TODO SAVE SOMEWHERE ELSE
-                    
-                    Vector3 pos = new Vector3(
-                        (x + ResolutionQuad / 2),
-                        0,
-                        (z + ResolutionQuad / 2)
-                    );
-                      
-                    //TODO: REMOVE INSTANTIATE
-                    //Instantiate(centerPrefab, pos, Quaternion.identity);
-                    bucket.Add(pos);
-                }
-                
-                // if (pointCounter == 0) // given that we actually have a point here
-                // {
-                //     Vector3 pos = new Vector3(
-                //         (x + ResolutionQuad / 2),
-                //         0,
-                //         (z + ResolutionQuad / 2)
-                //     );
-                //         
-                //     Instantiate(centerPrefab, pos, Quaternion.identity);
-                //     bucket.Add(pos);
-                // }
-                
-
-            } ///// Going back up / moving further
-            
-        }
-        
-    }
-
     
-    void CreateMesh()
-    {
-
-        // New points that we will create mesh of.
-        var _vertices = new List<Vector3>();//[(int) ((xmax + 1) * (zmax + 1))];
-
-        for (int i = 0, z = (int)zmin; i <= zmax; i+=ResolutionQuad)
-        {
-            for (int x = (int)xmin; x <= xmax; x+=ResolutionQuad)
-            {
-
-                // Variables that are going to give us the greatest values within here
-                float avg_height = default;
-                float avg_NW = default;
-                float avg_NE = default;
-                float avg_SW = default;
-                float avg_SE = default;
-                //Create new plane
-                quad flate = new quad();
-
-                
-                // Give them the new List to "clear" themselves
-                List<float> tempX = new List<float>();
-                List<float> tempZ = new List<float>();
-                List<Vector3> tempVertex = new List<Vector3>(); // In order to get the average amount of surface area of all
-                int countHowManyWithinArea = 0;
-                // Loop through our points that are within the x and z to x+resolution and z+resolution
-                foreach (var vtx in mPointSky)
-                {
-                    // our point is within the square size
-                    if (vtx.x <= x && vtx.z <= z)
-                    {
-                        //TODO: Work with implementation of points into a new plane. Check 
-                        // This is inheriently the correct implemenatation.
-                        // Because now we iterate/move along an "axis" where all these existing points are
-                        
-                        //Add this vtx that has been 
-                        tempX.Add(vtx.x);   // used to get the corners within this respective quad that we are searching
-                        tempZ.Add(vtx.z);   // used to get the corners within this respective quad that we are searching
-                        avg_NW += z;
-                        avg_NE += z + ResolutionQuad;
-                        avg_SW += x;
-                        avg_SE += x + ResolutionQuad;
-                        avg_height += vtx.y;
-                        
-                        countHowManyWithinArea++;
-                    }
-                }
-                ///////////////////////////////////////////////////////////////////////////////////////////////////////
-                // After calculating average height from looping all points that exists
-                
-                // float _xmax = default;
-                // float _xmin = default;
-                // float _zmin = default;
-                // float _zmax = default;
-                // 
-                // _xmax = tempX.Max();
-                // _xmin = tempX.Min();
-                // _zmin = tempZ.Max();
-                // _zmax = tempZ.Min();
-                // 
-                // 
-                // Debug.Log("xmax"+_xmax+"xmin"+_zmax+"zmin"+_zmin+"zmax"+_zmax);
-
-                // float avgX = (avg_SW + avg_SE) / 2 * countHowManyWithinArea;
-                // float avgY = avg_height / countHowManyWithinArea;
-                // float avgZ = (avg_NW + avg_NE) / 2 * countHowManyWithinArea;
- 
-                // flate.point = new Vector3(avgX, avgY, avgZ);
-                // 
-                // Debug.Log(flate.point);
-                // tempCenter.Add(flate.point);
-                // 
-                // tempX.Clear();
-                // tempZ.Clear();
-                
-                // flate.NW = _zmax + _zmin;
-                // flate.NE = _zmax + _xmax;
-                // flate.SW = _zmin + _xmin;
-                // flate.SE = _zmin + _xmax;
-                
-                
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                // quad surf = new quad();
-                // surf.NE     
-                
-                //float y = GetSurfaceHeight(new Vector2(x,z));
-                
-                //TODO: MAYBE NOT ADD THESE TO A VERTICES OF ANY SORT
-                _vertices.Add(new Vector3(x,0,z));
-                i++;
-            }
-            
-        }
-
-        // THIS "vertices" IS SUPPOSED TO BE THE "PLANE"
-        vertices = _vertices.ToArray();
-
-        
-        int vert = 0;
-        int tris = 0;
-
-        triangles = new int[(int)zmax * (int)xmax * 6];
-
-        for (int z = (int)zmin; z < (int)zmax; z++)
-        {
-            for (int x = (int) xmin; x < (int) xmax; x++)
-            {
-
-                triangles[tris + 0] = vert + 0;
-                triangles[tris + 1] = vert + (int)xmax + 1;
-                triangles[tris + 2] = vert + 1;
-                triangles[tris + 3] = vert + 1;
-                triangles[tris + 4] = vert + (int)xmax + 1;
-                triangles[tris + 5] = vert + (int)xmax + 2;
-
-                vert++;
-                tris += 6;
-            }
-
-            vert++;
-
-        }
-        
-        
-
-
-    }
-
+    
     #region Update, Awake and Gizmos
-
     
-
-    // private void OnDrawGizmos()
-    // {
-    //     if (vertices == null) return;
-    //
-    //    // foreach (var vertx in vertices)
-    //    // {
-    //    //     Gizmos.color = Color.green;
-    //    //     Gizmos.DrawCube(vertx, Vector3.one * 60f);
-    //    // }
-    //
-    //    if (bDrawDebugGizmos)
-    //    {
-    //        foreach (var vtxx in mPointSky)
-    //        {
-    //            Gizmos.color = Color.blue;
-    //            Gizmos.DrawCube(vtxx, Vector3.one * 50f);
-    //        } 
-    //    }
-    //
-    //    foreach (var BTS in CornerBase)
-    //    {
-    //        Gizmos.color = Color.black;
-    //        Gizmos.DrawCube(BTS, Vector3.one * 6f);
-    //    }
-    //    
-    //    foreach (var KPOP in CenterBase)
-    //    {
-    //        Gizmos.color = Color.magenta;
-    //        Gizmos.DrawCube(KPOP, Vector3.one * 6f);
-    //    }
-    //
-    //    if (bDrawDebugLine)
-    //    {
-    //        for(int i = 0; i < CenterBase.Count - 1; i++)
-    //        {
-    //            Gizmos.color = Color.black;
-    //            Gizmos.DrawLine(CenterBase[i], CenterBase[i+1]);
-    //        }
-    //    }
-    //
-    //   // if (bTrekantTest)
-    //   // {
-    //   //     Gizmos.color = Color.green;
-    //   //     Gizmos.DrawLine(vertices[0],vertices[1]);
-    //   //     Gizmos.DrawLine(vertices[0],CenterBase[30]);
-    //   //     Gizmos.DrawLine(vertices[30],CenterBase[1]);
-    //   // }
-    //    
-    //    
-    //    
-    //     
-    //     // foreach (var vtx in tempCenter)
-    //     // {
-    //     //     Gizmos.color = Color.blue;
-    //     //     Gizmos.DrawCube(vtx,Vector3.one * 60f);
-    //     // }
-    //
-    // }
-
     void UpdateMesh()
     {
         mesh.Clear();
@@ -620,45 +218,7 @@ public class Delaunay : MonoBehaviour
     #endregion
 
 
-    void newFunc()
-    {
-        
-        
-        
-        //quad mainQuad = new quad();
-        //mainQuad.NE = xmax + zmax;
-        //mainQuad.NW = xmin + zmax;
-        //mainQuad.SW = xmin + zmin;
-        //mainQuad.SE = xmax + zmin;
-
-        NE = new Vector3(xmax, 0, zmax); // just storing data
-        NW = new Vector3(xmin, 0, zmax); // just storing data
-        SW = new Vector3(xmin, 0, zmin); // just storing data
-        SE = new Vector3(xmax, 0, zmin); // just storing data
-
-        // 1. Hittil har vi lest inn alle punktene
-        // 2. Bestemt xmin,zmin, xmax, zmax
-        // 3. valgt at ResolutionQuad er vår størrelse
-        // 4. for alle datapunkter
-
-        // points er container for alle punktene fra punktsky.
-                
-        foreach (var vtx in points)
-        {
-            
-            
-            
-            // (a) bestem hvilken rute de tilhører 
-            // (b) bruk midtpunktet i ruta som xz-verdi (altså y verdi)
-            // (c) registrer høyden og oppdater høyden for midtpunktet i aktuall rute
-            //      (for eksempel gjennomsnitt, vi kan få flere punkter i en rute)
-                    
-                    
-                    
-                    
-        }
-    }
-
+   
 
     #region Height functions
 
