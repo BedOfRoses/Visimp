@@ -157,27 +157,17 @@ MonoBehaviour:
   mesh: {fileID: 0}
   vertices: []
   triangles: 
+  triangleIndex: 
   centerPrefab: {fileID: 7353314191793013804, guid: 638d79779443932498cc892a854cbdb5,
     type: 3}
-  bDrawDebugGizmos: 0
-  bDrawDebugLine: 0
-  bTrekantTest: 0
-  bucket: []
   Resolution: 50
-  ResolutionQuad: 20
   zmin: 0
   xmin: 0
   zmax: 0
   xmax: 0
-  NE: {x: 0, y: 0, z: 0}
-  NW: {x: 0, y: 0, z: 0}
-  SW: {x: 0, y: 0, z: 0}
-  SE: {x: 0, y: 0, z: 0}
-  points: []
   skipAmount: 10000
   nameee: merged.txt
   mPointSky: []
-  tempCenter: []
 --- !u!33 &137354571
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -472,7 +462,7 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 1
+  m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &1707065145
