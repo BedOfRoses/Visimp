@@ -49,8 +49,6 @@ public class BallScript : MonoBehaviour
    [SerializeField] private float radius = 0.015f;
    [SerializeField] private Vector3 spawnPos3 = Vector3.zero;
    
-   
-   
    public void CollisionCorrection()
    {
     
@@ -87,13 +85,10 @@ public class BallScript : MonoBehaviour
 
    private void FixedUpdate()
     {
-        
-        
-        move();
+        // move();
+        move2();
         // CollisionCorrection();
-
-        deltaPosition = currentPosition - previousPosition;
-
+        //deltaPosition = currentPosition - previousPosition;
     }
     
     void move()
@@ -109,6 +104,7 @@ public class BallScript : MonoBehaviour
 
         int[] currentTriangle = new []{1,2,3};
         int[] previousTriangle = new []{1,2,3};
+        
         
         
         for (int i = 0; i < meshRef.triangles.Length;  i+=3 )
@@ -186,7 +182,102 @@ public class BallScript : MonoBehaviour
         }
     }
 
+    void move2()
+    {
 
+        int triangleLength = meshRef.triangles.Length;
+        
+        for (int i = 0; i < triangleLength;  i+=3 )
+        {
+            current_Index = i / 3;
+
+           Vector3 v0 = meshRef.vertices[meshRef.triangles[i]];
+           Vector3 v1 = meshRef.vertices[meshRef.triangles[i+1]];
+           Vector3 v2 = meshRef.vertices[meshRef.triangles[i+2]];
+           
+           barysentricCoordinateToBall = BarycentricFunction(
+               new Vector2(v0.x, v0.z), 
+               new Vector2(v1.x, v1.z) ,
+               new Vector2(v2.x, v2.z), 
+               new Vector2(transform.position.x, transform.position.z));
+           
+
+            if (barysentricCoordinateToBall is{x:>= 0, y:>= 0, z:>= 0})
+            {
+                currentNormal  = CalculateCurrentNormal(v0,v1,v2); 
+                // timeOfFirstTriangle += Time.fixedDeltaTime;
+
+                accelerationVector = CalculateAccelerationVector(currentNormal);
+                currentVelocity = CalculateCurrentVelocity();
+                previousVelocity = currentVelocity;
+
+                currentPosition = CalculateCurrentPosition();
+                previousPosition = currentPosition;
+                
+                this.transform.position = currentPosition;
+                
+                if (current_Index != previous_Index)
+                { 
+                    collitionNormal = CalculateCollitionNormal();
+                    
+                    velocityCorrection = CalculateVelocityCorrection(); 
+                    
+                    previousVelocity = velocityCorrection + accelerationVector * Time.fixedDeltaTime;
+
+                    currentPosition = CalculateCurrentPosition();
+                  
+                    previousPosition = currentPosition;
+                    transform.position = currentPosition;
+                
+                }
+                
+                previousNormal = currentNormal;
+                previous_Index = current_Index;
+            }
+
+            
+            
+        }
+
+    }
+
+    Vector3 CalculateCurrentNormal(Vector3 vv0,Vector3 vv1, Vector3 vv2)
+    {
+        return (Vector3.Cross((vv1 - vv0), (vv2 - vv0)).normalized);
+
+    }
+    Vector3 CalculateVelocityCorrection()
+    {
+        return (previousVelocity -
+                2 * Vector3.Project(previousVelocity, collitionNormal));
+    }
+    Vector3 CalculateCollitionNormal()
+    {
+        return ((previousNormal + currentNormal).normalized);
+    }
+    Vector3 CalculateCurrentPosition()
+    {
+       return (previousPosition + previousVelocity * Time.fixedDeltaTime);
+    }
+    Vector3 CalculateCurrentVelocity()
+    {
+        return (previousVelocity + accelerationVector * Time.fixedDeltaTime);
+    }
+    Vector3 CalculateAccelerationVector(Vector3 NormalVector)
+    {
+        return new Vector3(
+            (NormalVector.x * NormalVector.y),
+            (NormalVector.y * NormalVector.y) - 1f,
+            (NormalVector.z * NormalVector.y) ) * -Physics.gravity.y;
+    }
+    
+    
+    bool isInsideTriangle(int triangle_index)
+    {
+        return true;
+    }
+    
+    
     // private void OnDrawGizmos()
     // {
     //     var position = transform.position;
