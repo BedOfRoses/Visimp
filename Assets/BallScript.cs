@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class BallScript : MonoBehaviour
 {
-      #region Posisjon Spawning
-    [SerializeField] private Vector2 spawnlocation = Vector2.zero;
-    #endregion
-    
+     
   #region hastighet og vector 3 for hastighet og posisjon
   [SerializeField]  private Vector3 deltaPosition = Vector3.zero;
   [SerializeField]  private Vector3 currentPosition = Vector3.zero;
@@ -34,7 +31,6 @@ public class BallScript : MonoBehaviour
 
   #region referanser
   public Delaunay myTrekant;
-  public Mesh meshRef;
   #endregion
   
   #region Vertexer
@@ -67,18 +63,13 @@ public class BallScript : MonoBehaviour
 
    public void Start()
    {
-       var boi = myTrekant.GetSurfaceHeight(new Vector2(spawnPosition.x, spawnPosition.y));
+       var boi = myTrekant.GetSurfaceHeight(new Vector2(transform.position.x, transform.position.z));
        Debug.Log("Height: " + boi);
-       var newSpawnpos = new Vector3(spawnPosition.x, boi+radius, spawnPosition.y);
+       var newSpawnpos = new Vector3(transform.position.x, boi+radius, transform.position.z);
        currentPosition = newSpawnpos;
        transform.position = currentPosition;
        previousPosition = currentPosition;
        spawnPos3 = currentPosition;
-
-       // Get the referance
-       if(myTrekant)
-         meshRef = myTrekant.mesh;
-
    }
 
   
@@ -107,13 +98,13 @@ public class BallScript : MonoBehaviour
         
         
         
-        for (int i = 0; i < meshRef.triangles.Length;  i+=3 )
+        for (int i = 0; i < myTrekant.triangles.Length;  i+=3 )
         {
             current_Index = i / 3;
 
-           Vector3 v0 = meshRef.vertices[meshRef.triangles[i]];
-           Vector3 v1 = meshRef.vertices[meshRef.triangles[i+1]];
-           Vector3 v2 = meshRef.vertices[meshRef.triangles[i+2]];
+           Vector3 v0 = myTrekant.vertices[myTrekant.triangles[i]];
+           Vector3 v1 = myTrekant.vertices[myTrekant.triangles[i+1]];
+           Vector3 v2 = myTrekant.vertices[myTrekant.triangles[i+2]];
            
            barysentricCoordinateToBall = BarycentricFunction(
                new Vector2(v0.x, v0.z), 
@@ -185,17 +176,17 @@ public class BallScript : MonoBehaviour
     void move2()
     {
 
-        int triangleLength = meshRef.triangles.Length;
+        int triangleLength = myTrekant.triangles.Length;
 
-        Vector3 v0, v1, v2;
+        // Vector3 v0, v1, v2;
         
         for (int i = 0; i < triangleLength;  i+=3 )
         { 
             current_Index = i / 3;
 
-            v0 = meshRef.vertices[meshRef.triangles[i]];
-            v1 = meshRef.vertices[meshRef.triangles[i+1]];
-            v2 = meshRef.vertices[meshRef.triangles[i+2]];
+           Vector3 v0 = myTrekant.vertices[myTrekant.triangles[i]];
+           Vector3 v1 = myTrekant.vertices[myTrekant.triangles[i+1]];
+           Vector3 v2 = myTrekant.vertices[myTrekant.triangles[i+2]];
            
            barysentricCoordinateToBall = BarycentricFunction(
                new Vector2(v0.x, v0.z), 
