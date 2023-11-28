@@ -241,6 +241,7 @@ public class Delaunay : MonoBehaviour
             v0 = vertices[index_0];
             v1 = vertices[index_1];
             v2 = vertices[index_2];
+            
 
           
 
