@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -59,13 +60,18 @@ public class BallScript : MonoBehaviour
 
    }
 
-   
+
+   private void Awake()
+   {
+       radius = transform.localScale.x / 2;
+       Debug.Log("Radius" + radius + "GameObj: "+ gameObject.name.ToString());
+   }
 
    public void Start()
    {
-       var boi = myTrekant.GetSurfaceHeight(new Vector2(transform.position.x, transform.position.z));
-       Debug.Log("Height: " + boi);
-       var newSpawnpos = new Vector3(transform.position.x, boi+radius, transform.position.z);
+       var height = myTrekant.GetSurfaceHeight(new Vector2(transform.position.x, transform.position.z));
+       Debug.Log("Height: " + height);
+       var newSpawnpos = new Vector3(transform.position.x, height + radius, transform.position.z);
        currentPosition = newSpawnpos;
        transform.position = currentPosition;
        previousPosition = currentPosition;
