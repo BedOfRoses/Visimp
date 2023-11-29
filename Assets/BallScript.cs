@@ -48,7 +48,6 @@ public class BallScript : MonoBehaviour
    
    public void CollisionCorrection()
    {
-    
     var k = new Vector3(currentPosition.x ,
         myTrekant.GetSurfaceHeight(new Vector2(currentPosition.x, currentPosition.z)), 
         currentPosition.z);
@@ -57,7 +56,6 @@ public class BallScript : MonoBehaviour
     if (!(currentPosition.y < k.y)) return;
     var _newPositionAfterCollition = k + radius * currentNormal;
     transform.position = _newPositionAfterCollition;
-
    }
 
 
@@ -82,109 +80,13 @@ public class BallScript : MonoBehaviour
 
    private void FixedUpdate()
     {
-        // move();
-        move2();
-        // CollisionCorrection();
-        //deltaPosition = currentPosition - previousPosition;
+        Move();
     }
-    
-    void move()
-    {
-        
-        
-        // Find the current triangle we are at and save this
-        //
-        // if we move outside of the triangle,
-        // do the search of the triangles until the triangle is the same as barysentric
-        
-        
-
-        int[] currentTriangle = new []{1,2,3};
-        int[] previousTriangle = new []{1,2,3};
-        
-        
-        
-        for (int i = 0; i < myTrekant.triangles.Length;  i+=3 )
-        {
-            current_Index = i / 3;
-
-           Vector3 v0 = myTrekant.vertices[myTrekant.triangles[i]];
-           Vector3 v1 = myTrekant.vertices[myTrekant.triangles[i+1]];
-           Vector3 v2 = myTrekant.vertices[myTrekant.triangles[i+2]];
-           
-           barysentricCoordinateToBall = BarycentricFunction(
-               new Vector2(v0.x, v0.z), 
-               new Vector2(v1.x, v1.z) ,
-               new Vector2(v2.x, v2.z), 
-               new Vector2(transform.position.x, transform.position.z));
-           
-
-            if (barysentricCoordinateToBall is{x:>= 0, y:>= 0, z:>= 0})
-            {
-                currentNormal  = Vector3.Cross((v1 - v0), (v2 - v0)).normalized; 
-                timeOfFirstTriangle += Time.fixedDeltaTime;
-                
-                // beregn akselasjonsvektor - ligning (8.12)
-                accelerationVector = new Vector3(
-                    (currentNormal.x * currentNormal.y),
-                    (currentNormal.y * currentNormal.y) - 1f,
-                    (currentNormal.z * currentNormal.y) ) * -Physics.gravity.y;
-                
-            
-                
-                // Oppdaterer hastighet ligning ( 8 . 1 4 )
-                // Update Velocity ( Vk+1 = Vk + a*deltatime )
-                currentVelocity = previousVelocity + accelerationVector * Time.fixedDeltaTime; // ligning (8.14)
-                previousVelocity = currentVelocity;
-                // previousVelocity = deltaPos * Time.fixedDeltaTime;
-            
-                // Oppdaterer posisjon ligning  ( 8 . 1 5 )
-                // Update Position ( Pk+1 = Pk + Vk*deltaTime )
-                currentPosition = previousPosition + previousVelocity * Time.fixedDeltaTime; // ligning (8.15)
-                previousPosition = currentPosition;
-               
-                
-                this.transform.position = currentPosition;
-                
-                if (current_Index != previous_Index)
-                { 
-                    collitionNormal = (previousNormal + currentNormal).normalized;
-                    
-                    
-                    //velocityCorrection = previousVelocity -
-                    //                     2 * Vector3.Dot(previousVelocity, collitionNormal) * collitionNormal;
-                    
-                    // Collision ball to wall -  ligning (8.16)
-                    velocityCorrection = previousVelocity -
-                                         2 * Vector3.Project(previousVelocity, collitionNormal); 
-                    
-                    previousVelocity = velocityCorrection + accelerationVector * Time.fixedDeltaTime;
-                    
-                    // update pos
-                    currentPosition = previousPosition + previousVelocity * Time.fixedDeltaTime; // ligning (8.15)
-                    
-                    
-                    previousPosition = currentPosition;
-                    transform.position = currentPosition;
-                    
-                    // CollisionCorrection();
-                }
-                
-                previousNormal = currentNormal;
-                previous_Index = current_Index;
-            }
-
-            
-            
-        }
-    }
-
-    void move2()
+   
+    void Move()
     {
 
         int triangleLength = myTrekant.triangles.Length;
-
-        // Vector3 v0, v1, v2;
         
         for (int i = 0; i < triangleLength;  i+=3 )
         { 
@@ -207,10 +109,13 @@ public class BallScript : MonoBehaviour
                 // timeOfFirstTriangle += Time.fixedDeltaTime;
 
                 accelerationVector = CalculateAccelerationVector(currentNormal);
+                
                 currentVelocity = CalculateCurrentVelocity();
+                
                 previousVelocity = currentVelocity;
 
                 currentPosition = CalculateCurrentPosition();
+                
                 previousPosition = currentPosition;
                 
                 this.transform.position = currentPosition;
@@ -267,12 +172,6 @@ public class BallScript : MonoBehaviour
             (NormalVector.x * NormalVector.y),
             (NormalVector.y * NormalVector.y) - 1f,
             (NormalVector.z * NormalVector.y) ) * -Physics.gravity.y;
-    }
-    
-    
-    bool isInsideTriangle(int triangle_index)
-    {
-        return true;
     }
     
    
