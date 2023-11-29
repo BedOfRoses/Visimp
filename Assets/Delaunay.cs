@@ -15,6 +15,9 @@ using Vector3 = UnityEngine.Vector3;
 [RequireComponent(typeof(MeshFilter))]
 public class Delaunay : MonoBehaviour
 {
+    
+    // SOURCES : MESH GENERATOR IN UNITY - BASICS (BY BRACKEYS) : https://www.youtube.com/watch?v=64NblGkAabk
+    
     [SerializeField] public Mesh mesh;
     [SerializeField] public Vector3[] vertices;
     [SerializeField] public int[] triangles;
@@ -23,6 +26,7 @@ public class Delaunay : MonoBehaviour
     CultureInfo cultureInfo = new CultureInfo("en-US");
     [SerializeField] private GameObject centerPrefab;
     [SerializeField] private int Resolution = 50;
+    [SerializeField] private bool drawGizmoPointSky = false;
     
 
     #region MyRegion
@@ -44,7 +48,7 @@ public class Delaunay : MonoBehaviour
 
     /*Self-note: if const, then [SerializeField] won't work */
     [SerializeField] public int skipAmount = 100000;
-    public string nameee;
+    public string nameOfFile;
 
     #region Data Storage of Point Sky
     /*Sole purpose of this list is the keep track of all our points from our pointsky data file set */
@@ -58,14 +62,13 @@ public class Delaunay : MonoBehaviour
     {
         CreateGrid();
         UpdateMesh();
-        mPointSky.Clear(); // clear this memory we dont need anymore
+        if(!drawGizmoPointSky)
+            mPointSky.Clear(); // clear this memory we dont need anymore
         CornerBase.Clear();
         CenterBase.Clear();
     }
-
     
-
-    Vector3 GetHeigh(Vector3 referance)
+    Vector3 GetHeight(Vector3 referance)
     {
 
         float AverageHeightOfNewPoint = 0;
@@ -74,7 +77,6 @@ public class Delaunay : MonoBehaviour
         // Søke gjennom punkt sky
         foreach (var bts in mPointSky)
         {
-
             // Bounds
             var left = referance.x - Resolution / 2;
             var right = referance.x + Resolution / 2;
@@ -108,18 +110,16 @@ public class Delaunay : MonoBehaviour
     {
 
 
-        // Highest Floor
+        // Highest Floor for the x and z. This will be the size of steps for x and z.
         int zStepsHighestFloor = (int)zmax / Resolution;
         int xStepsHighestFloor = (int)xmax / Resolution;
         
-        //Debug.Log("zSteps: " + zStepsHighestFloor + " xSteps: "+ xStepsHighestFloor);
-
         
         // Loop for setting the height of the center points
-        // Bound Z, z begins at 0
+        // Bounds of Z, z begins at 0
         for (int z = (int) zmin; z <= zStepsHighestFloor; z++)
         {
-            // Bound X, x begins at 0
+            // Bounds of X, x begins at 0
             for (int x = (int) xmin; x <= xStepsHighestFloor; x++)
             {
                 // Here we add the new corners of the grid from algoritme 10.6
@@ -129,7 +129,7 @@ public class Delaunay : MonoBehaviour
                 if (z < zStepsHighestFloor - 1 && x < xStepsHighestFloor - 1)
                 {
                     var boa = new Vector3(x * Resolution + Resolution / 2, 0, z * Resolution + Resolution / 2);
-                    boa = GetHeigh(boa); // update the y value
+                    boa = GetHeight(boa); // update the y value
                     CenterBase.Add(boa);
                 }
                 
@@ -137,9 +137,7 @@ public class Delaunay : MonoBehaviour
         }
 
         vertices = CenterBase.ToArray();
-
         
-
         int vert = 0;
         int tris = 0;
 
@@ -209,7 +207,7 @@ public class Delaunay : MonoBehaviour
         GetComponent<MeshFilter>().mesh = mesh;
         
         /*Firstly just read the data and give the information to different variables, like mPointSky etc*/
-        ReadData(nameee);
+        ReadData(nameOfFile);
         
         /*Secondly, set the xmin,xmax,zmin and zmax*/
         SetExtremetiesValue();
@@ -218,17 +216,22 @@ public class Delaunay : MonoBehaviour
     #endregion
 
 
-   
+    private void OnDrawGizmos()
+    {
+        if (drawGizmoPointSky)
+        {
+            Gizmos.color = Color.cyan;
+            foreach (var point in mPointSky)
+            {
+                Gizmos.DrawCube(point,Vector3.one * 15f);
+            }
+        }
+    }
 
     #region Height functions
-
-    
-
-   
     public float GetSurfaceHeight(Vector2 point)
     {
         // source https://github.com/haldorj/3Dprog22/blob/main/triangulation.cpp
-        
         
         for (var i = 0; i < mesh.triangles.Length; i++)
         {
@@ -242,9 +245,7 @@ public class Delaunay : MonoBehaviour
             v1 = vertices[index_1];
             v2 = vertices[index_2];
             
-
-          
-
+            
             var baryCords = BarycentricFunc(
                 new Vector2(v0.x,v0.z), 
                 new Vector2(v1.x,v1.z), 
@@ -326,8 +327,6 @@ public class Delaunay : MonoBehaviour
         
         string filepath = Path.Combine(Application.streamingAssetsPath, nameOfFile);
         
-        // List<Vector3> mPointSky = new List<Vector3>();
-        
         if (File.Exists(filepath))
         {
             
@@ -391,11 +390,7 @@ public class Delaunay : MonoBehaviour
                 tempX.Clear();
                 tempY.Clear();
                 tempZ.Clear();
-                //tempX = null;
-                //tempY = null;
-                //tempZ = null;
-                
-              
+               
               
                 // Now we read in again, but this time we add these points and also
                 // subtract their smallest value from each point.
@@ -419,8 +414,7 @@ public class Delaunay : MonoBehaviour
                     mPointSky.Add(_newVertex);
                 }
 
-                //TODO: ADD THESE to a temp vertices
-                vertices = mPointSky.ToArray();
+                vertices = mPointSky.ToArray(); // Later overriden with the correct vertices data within this pointsky data.
 
             }
             
