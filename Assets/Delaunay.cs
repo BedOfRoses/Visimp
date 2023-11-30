@@ -279,7 +279,7 @@ public class Delaunay : MonoBehaviour
     }
     private static Vector3 BarycentricFunc(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 pt)
     {
-        
+        // source/inspiration https://github.com/haldorj/3Dprog22/ from when we did the 3DProg project.
         Vector2 p12 = p2 - p1;
         Vector2 p13 = p3 - p1;
         Vector3 nn = Vector3.Cross(new Vector3(p12.x, 0, p12.y), new Vector3(p13.x, 0, p13.y));
