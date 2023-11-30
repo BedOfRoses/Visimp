@@ -85,7 +85,6 @@ public class BallScript : MonoBehaviour
    
     void Move()
     {
-
         int triangleLength = myTrekant.triangles.Length;
         
         for (int i = 0; i < triangleLength;  i+=3 )
@@ -147,27 +146,33 @@ public class BallScript : MonoBehaviour
 
     Vector3 CalculateCurrentNormal(Vector3 vv0,Vector3 vv1, Vector3 vv2)
     {
+        // Ligning fra 8.6 Algoritme punkt 2.
         return (Vector3.Cross((vv1 - vv0), (vv2 - vv0)).normalized);
     }
     Vector3 CalculateVelocityCorrection()
     {
+        // Ligning (8.16)
         return (previousVelocity -
                 2 * Vector3.Project(previousVelocity, collitionNormal));
     }
     Vector3 CalculateCollitionNormal()
     {
+        // Ligning (8.17)
         return ((previousNormal + currentNormal).normalized);
     }
     Vector3 CalculateCurrentPosition()
     {
+        // Ligning (8.15)
        return (previousPosition + previousVelocity * Time.fixedDeltaTime);
     }
     Vector3 CalculateCurrentVelocity()
     {
+        // Ligning (8.14)
         return (previousVelocity + accelerationVector * Time.fixedDeltaTime);
     }
     Vector3 CalculateAccelerationVector(Vector3 NormalVector)
     {
+        // Ligning (8.12)
         return new Vector3(
             (NormalVector.x * NormalVector.y),
             (NormalVector.y * NormalVector.y) - 1f,
