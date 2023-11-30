@@ -27,6 +27,9 @@ public class Delaunay : MonoBehaviour
     [SerializeField] private GameObject centerPrefab;
     [SerializeField] private int Resolution = 50;
     [SerializeField] private bool drawGizmoPointSky = false;
+    [SerializeField] private bool drawGizmoCornerBase = false;
+    [SerializeField] private bool drawGizmoCenterBase = false;
+    
     
 
     #region MyRegion
@@ -64,8 +67,10 @@ public class Delaunay : MonoBehaviour
         UpdateMesh();
         if(!drawGizmoPointSky)
             mPointSky.Clear(); // clear this memory we dont need anymore
-        CornerBase.Clear();
-        CenterBase.Clear();
+        if(!drawGizmoCornerBase)
+            CornerBase.Clear();
+        if(!drawGizmoCenterBase)
+            CenterBase.Clear();
     }
     
     Vector3 GetHeight(Vector3 referance)
@@ -89,19 +94,13 @@ public class Delaunay : MonoBehaviour
                 AVG_Counter++;
                 AverageHeightOfNewPoint += bts.y; 
             }
-
         }
-
-
         if (AverageHeightOfNewPoint > 0)
         {
             AverageHeightOfNewPoint /= AVG_Counter;
             referance.y = AverageHeightOfNewPoint;
         }
-        
-
         Debug.Log("referance.y : "+ referance.y.ToString("F2"));
-        
         Debug.Log("AverageHeightOfNewPoint: "+ AverageHeightOfNewPoint);
         return referance;
     }
@@ -136,7 +135,8 @@ public class Delaunay : MonoBehaviour
             }
         }
 
-        vertices = CenterBase.ToArray();
+        // Here vertices are overriden and we have the correct data for the vertices.
+        vertices = CenterBase.ToArray(); 
         
         int vert = 0;
         int tris = 0;
@@ -156,9 +156,9 @@ public class Delaunay : MonoBehaviour
         {
             for (int x = 0; x < xStepsHighestFloor - 2; x++)
             {
-                step1 = index; // 0
-                step2 = index + xStepsHighestFloor - 1; // 0 + 31 - 1 = 30
-                step3 = index + 1; // 0 
+                step1 = index; 
+                step2 = index + xStepsHighestFloor - 1;
+                step3 = index + 1;
            
                 step4 = index + 1;
                 step5 = index + xStepsHighestFloor - 1;
@@ -171,8 +171,6 @@ public class Delaunay : MonoBehaviour
                 tempList.Add(step4);
                 tempList.Add(step5);
                 tempList.Add(step6);
-                
-                
             } 
             index++;
         }
@@ -202,7 +200,6 @@ public class Delaunay : MonoBehaviour
     
     private void Awake()
     {
-        
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
         
@@ -211,7 +208,6 @@ public class Delaunay : MonoBehaviour
         
         /*Secondly, set the xmin,xmax,zmin and zmax*/
         SetExtremetiesValue();
-        
     }
     #endregion
 
@@ -226,6 +222,25 @@ public class Delaunay : MonoBehaviour
                 Gizmos.DrawCube(point,Vector3.one * 15f);
             }
         }
+
+        if (drawGizmoCornerBase)
+        {
+            Gizmos.color = Color.red;
+            foreach (var corner in CornerBase)
+            {
+                Gizmos.DrawCube(corner,Vector3.one * 15f);
+            }
+        }
+
+        if (drawGizmoCenterBase)
+        {
+            Gizmos.color = Color.green;
+            foreach (var center in CenterBase)
+            {
+                Gizmos.DrawCube(center,Vector3.one * 15f);
+            }
+        }
+        
     }
 
     #region Height functions
@@ -263,6 +278,7 @@ public class Delaunay : MonoBehaviour
     }
     private static Vector3 BarycentricFunc(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 pt)
     {
+        
         Vector2 p12 = p2 - p1;
         Vector2 p13 = p3 - p1;
         Vector3 nn = Vector3.Cross(new Vector3(p12.x, 0, p12.y), new Vector3(p13.x, 0, p13.y));
@@ -347,6 +363,7 @@ public class Delaunay : MonoBehaviour
                 List<float> tempZ= new List<float>();
                 
                 // Iterate to add in respective temporary storage.
+                // Primarily just to get the extremeties within this loop.
                 for (var i = 1; i <= HowManyPoints; i += skipAmount)
                 {
                     var iterator = tempText[i].Split(' '); 
@@ -354,11 +371,6 @@ public class Delaunay : MonoBehaviour
                     float parse0 = float.Parse(iterator[0], cultureInfo); //x
                     float parse1 = float.Parse(iterator[1], cultureInfo); //y
                     float parse2 = float.Parse(iterator[2], cultureInfo); //z
-                    ///
-                    ///
-                    /// Y is now Z !!!!!!!!!!!!!!!!!!!!!
-                    ///
-                    /// 
                     tempX.Add(parse0);
                     tempY.Add(parse2);
                     tempZ.Add(parse1);
@@ -367,18 +379,6 @@ public class Delaunay : MonoBehaviour
                 }
                 
                 
-                ////////////////////////////////////////////////////////////////////////////////////////////////////
-                ////////////////////////////////////////////////////////////////////////////////////////////////////
-                ////////////////////////////////////////////////////////////////////////////////////////////////////
-                ///
-                ///     IMPORTANT FOR SMALLEST VALUES (float values)
-                ///     Y AND Z HAS NOW CHANGED PLACES, WHICH MEANS:
-                ///     X(use), Y(height), Z(use)
-                ///     
-                /// 
-                ////////////////////////////////////////////////////////////////////////////////////////////////////
-                ////////////////////////////////////////////////////////////////////////////////////////////////////
-                ////////////////////////////////////////////////////////////////////////////////////////////////////
                 
                 smallestx = tempX.Min();
                 smallesty = tempY.Min();
@@ -397,7 +397,7 @@ public class Delaunay : MonoBehaviour
                 // that way we keep the respective relation between all the points
                 for (var i = 1; i <= HowManyPoints; i += skipAmount)
                 {
-                    var iterator = tempText[i].Split(' '); // splitter opp mellom mellomrommet
+                    var iterator = tempText[i].Split(' ');
                     
                     float parse0 = float.Parse(iterator[0], cultureInfo); // x but in unity it would be X  
                     float parse1 = float.Parse(iterator[1], cultureInfo); // y but in unity it would be Z
