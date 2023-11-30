@@ -162,6 +162,8 @@ MonoBehaviour:
     type: 3}
   Resolution: 30
   drawGizmoPointSky: 0
+  drawGizmoCornerBase: 0
+  drawGizmoCenterBase: 0
   zmin: 0
   xmin: 0
   zmax: 0
