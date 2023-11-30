@@ -161,12 +161,13 @@ MonoBehaviour:
   centerPrefab: {fileID: 7353314191793013804, guid: 638d79779443932498cc892a854cbdb5,
     type: 3}
   Resolution: 30
+  drawGizmoPointSky: 0
   zmin: 0
   xmin: 0
   zmax: 0
   xmax: 0
   skipAmount: 1000
-  nameee: merged.txt
+  nameOfFile: merged.txt
   mPointSky: []
 --- !u!33 &137354571
 MeshFilter:
