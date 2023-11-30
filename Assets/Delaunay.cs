@@ -152,6 +152,7 @@ public class Delaunay : MonoBehaviour
         int step6 = default; // second triangle
 
         
+        // Loop for creating the triangles.
         for (int i = 0; i < zStepsHighestFloor - 2; i++)
         {
             for (int x = 0; x < xStepsHighestFloor - 2; x++)
